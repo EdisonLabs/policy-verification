@@ -1,11 +1,11 @@
 <?php
 
-namespace EdisonLabs\PolicyVerification\PolicyCheck;
+namespace EdisonLabs\PolicyVerification\Check;
 
 /**
  * Defines a base class for Policy checks.
  *
- * @package EdisonLabs\PolicyVerification\PolicyCheck
+ * @package EdisonLabs\PolicyVerification\Check
  */
 abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
 {
@@ -34,8 +34,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
   /**
    * AbstractPolicyCheckBase constructor.
    *
-   * @param array $data
-   *   An array containing data to be passed in for checks and reports.
+   * @param array $data An array containing data to be passed in for checks and reports.
    */
   public function __construct(array $data = [])
   {
@@ -85,8 +84,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
   /**
    * Gets the policy check result.
    *
-   * @return int
-   *   Constants indicating whether the policy is compliant or not.
+   * @return int Constants indicating whether the policy is compliant or not.
    */
   public function getResult()
   {
@@ -100,8 +98,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
   /**
    * Gets the description of what happened in the check.
    *
-   * @return string
-   *   The policy check result message.
+   * @return string The policy check result message.
    */
   public function getResultMessage()
   {
@@ -115,8 +112,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
   /**
    * Checks whether policy is compliant.
    *
-   * @return bool
-   *   TRUE in case of success, FALSE otherwise.
+   * @return bool TRUE in case of success, FALSE otherwise.
    */
   public function isCompliant()
   {
@@ -126,12 +122,20 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
   /**
    * Checks whether policy is not compliant.
    *
-   * @return bool
-   *   TRUE in case of success, FALSE otherwise.
+   * @return bool TRUE in case of success, FALSE otherwise.
    */
   public function isNotCompliant()
   {
     return $this->getResult() == self::POLICY_NOT_COMPLIANT;
   }
 
+  /**
+   * Returns the policy data array.
+   *
+   * @return array The policy data.
+   */
+  public function getData()
+  {
+    return $this->data;
+  }
 }
