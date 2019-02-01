@@ -12,10 +12,10 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
 
   const POLICY_COMPLIANT = 1;
   const POLICY_NOT_COMPLIANT = 0;
-  const POLICY_RISK_LOW = 0;
-  const POLICY_RISK_MEDIUM = 1;
-  const POLICY_RISK_HIGH = 2;
-  const POLICY_RISK_CRITICAL = 3;
+  const POLICY_RISK_LOW = 'low';
+  const POLICY_RISK_MEDIUM = 'medium';
+  const POLICY_RISK_HIGH = 'high';
+  const POLICY_RISK_CRITICAL = 'critical';
 
   /**
    * Data passed in for checks and report.
@@ -29,7 +29,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
    *
    * @var int
    */
-  protected $result;
+  protected $result = NULL;
 
   /**
    * AbstractPolicyCheckBase constructor.
@@ -45,11 +45,6 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
    * {@inheritdoc}
    */
   abstract public function getName();
-
-  /**
-   * {@inheritdoc}
-   */
-  abstract public function getMachineName();
 
   /**
    * {@inheritdoc}
@@ -88,7 +83,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
    */
   public function getResult()
   {
-    if (!isset($this->result)) {
+    if (is_null($this->result)) {
       $this->result = $this->check();
     }
 

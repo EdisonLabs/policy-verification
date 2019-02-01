@@ -18,13 +18,6 @@ interface PolicyCheckInterface
   public function getName();
 
   /**
-   * Gets the machine name for the policy check.
-   *
-   * @return string The policy check machine name.
-   */
-  public function getMachineName();
-
-  /**
    * Gets a human readable description for the policy check.
    *
    * @return string The policy check description.
@@ -41,7 +34,7 @@ interface PolicyCheckInterface
   /**
    * Gets the risk level for the policy check.
    *
-   * @return int Constants indicating the risks low, medium, high or critical.
+   * @return string Constants indicating the risks low, medium, high or critical.
    */
   public function getRiskLevel();
 

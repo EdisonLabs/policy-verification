@@ -2,8 +2,7 @@
 
 namespace EdisonLabs\PolicyVerification\Command;
 
-use EdisonLabs\Metrics\Collector;
-use EdisonLabs\Metrics\DatastoreHandler;
+use EdisonLabs\PolicyVerification\Report;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -13,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Imeplements command for Policy verification.
+ * Implements command for Policy verification.
  */
 class PolicyVerificationCommand extends Command
 {
@@ -35,7 +34,7 @@ class PolicyVerificationCommand extends Command
   {
     $this->io = new SymfonyStyle($input, $output);
 
-    // Gets data paramater.
+    // Gets data parameter.
     $data = $input->getOption('data');
     $data = $this->getDataArray($data);
 
@@ -89,5 +88,12 @@ class PolicyVerificationCommand extends Command
    */
   protected function execute(InputInterface $input, OutputInterface $output)
   {
+
+    $report = new Report($this->data);
+
+    $checkResults = $report->getResultSummary();
+    $checkResults = $report->jsonExport();
+
+    echo "<pre>" . print_r($checkResults, TRUE) . "</pre>"; die;
   }
 }

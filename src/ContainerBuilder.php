@@ -1,13 +1,13 @@
 <?php
 
-namespace EdisonLabs\Metrics;
+namespace EdisonLabs\PolicyVerification;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder as SymfonyContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 /**
- * Class ContainerBuilder
+ * Class ContainerBuilder.
  */
 class ContainerBuilder
 {
@@ -23,7 +23,7 @@ class ContainerBuilder
    *
    * @throws \Exception
    */
-  public function __construct(array $config = [])
+  public function __construct(array $data = [])
   {
     $containerBuilder = new SymfonyContainerBuilder();
     $loader = new PhpFileLoader($containerBuilder, new FileLocator(__DIR__));
