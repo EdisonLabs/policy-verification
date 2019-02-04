@@ -28,6 +28,11 @@ class PolicyVerificationCommand extends Command
   protected $io;
 
   /**
+   * @var \EdisonLabs\PolicyVerification\Report
+   */
+  protected $report;
+
+  /**
    * {@inheritdoc}
    */
   protected function initialize(InputInterface $input, OutputInterface $output)
@@ -39,6 +44,7 @@ class PolicyVerificationCommand extends Command
     $data = $this->getDataArray($data);
 
     $this->data = $data;
+    $this->report = new Report($this->data);
   }
 
   /**
@@ -84,16 +90,81 @@ class PolicyVerificationCommand extends Command
   }
 
   /**
+   * Outputs the Policy summary report on JSON format.
+   *
+   * @param \Symfony\Component\Console\Input\InputInterface   $input Console input object.
+   * @param \Symfony\Component\Console\Output\OutputInterface $output Console output object.
+   *
+   * @throws \Exception
+   */
+  protected function outputReport(InputInterface $input, OutputInterface $output)
+  {
+    $policySummary = $this->report->getResultSummary();
+    $io = $this->io;
+
+    $format = $input->getOption('format');
+    if ($format == 'json') {
+      $output->writeln(json_encode($policySummary));
+      return;
+    }
+
+    // Prints result message.
+    $score = $policySummary['score_compliant_percentage'];
+    $totalPolicies = $policySummary['total_policies'];
+    $totalCompliantPolicies = $policySummary['total_compliant_policies'];
+    if ($policySummary['result'] == Report::REPORT_POLICY_NOT_COMPLIANT) {
+      $io->block("Score $score% ($totalCompliantPolicies of $totalPolicies)",'NOT COMPLIANT', 'fg=white;bg=red', ' ', true);
+    }
+    else {
+      $io->block("Score 100% ($totalCompliantPolicies of $totalPolicies)",'COMPLIANT', 'fg=white;bg=green', ' ', true);
+    }
+
+    // Prints non-compliant check results.
+    $nonComplianceMessages = $this->report->getNonCompliantChecksResultMessages();
+    if ($nonComplianceMessages) {
+      $io->listing($nonComplianceMessages);
+    }
+
+    // Prints actions:
+    $nonComplianceActions = $this->report->getNonCompliantChecksActions();
+    if ($nonComplianceActions) {
+      $io->text('Actions:');
+      $io->listing($this->report->getNonCompliantChecksActions());
+    }
+
+    $table = new Table($output);
+    $table->setStyle('box');
+    $table->setHeaders([
+      'Risk',
+      'Result',
+      'Name',
+      'Category',
+      'Result message',
+    ]);
+
+    $rows = [];
+
+    foreach ($policySummary['policies'] as $policies) {
+      foreach ($policies as $policy) {
+        $rows[] = [
+          strtoupper($policy['risk']),
+          strtoupper($policy['result']),
+          $policy['name'],
+          $policy['category'],
+          $policy['message'],
+        ];
+      }
+    }
+
+    $table->setRows($rows);
+    $table->render();
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-
-    $report = new Report($this->data);
-
-    $checkResults = $report->getResultSummary();
-    $checkResults = $report->jsonExport();
-
-    echo "<pre>" . print_r($checkResults, TRUE) . "</pre>"; die;
+    $this->outputReport($input, $output);
   }
 }

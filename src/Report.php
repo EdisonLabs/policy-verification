@@ -54,7 +54,7 @@ class Report
    *
    * @throws \Exception
    */
-  public function getPolicyChecks()
+  public function getChecks()
   {
     if (empty($this->policyChecks)) {
       $containerBuilder = new ContainerBuilder($this->data);
@@ -90,9 +90,9 @@ class Report
    *
    * @throws \Exception
    */
-  public function getPolicyChecksCompliant()
+  public function getCompliantChecks()
   {
-    return array_filter($this->getPolicyChecks(), function ($policyCheck) {
+    return array_filter($this->getChecks(), function ($policyCheck) {
       /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
       return $policyCheck->isCompliant();
     });
@@ -105,12 +105,56 @@ class Report
    *
    * @throws \Exception
    */
-  public function getPolicyChecksNotCompliant()
+  public function getNonCompliantChecks()
   {
-    return array_filter($this->getPolicyChecks(), function ($policyCheck) {
+    return array_filter($this->getChecks(), function ($policyCheck) {
       /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
       return $policyCheck->isNotCompliant();
     });
+  }
+
+  /**
+   * Returns an array containing result messages of non-compliant checks.
+   *
+   * @return array
+   *   An array of messages.
+   *
+   * @throws \Exception
+   */
+  public function getNonCompliantChecksResultMessages()
+  {
+    $messages = [];
+
+    /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
+    foreach ($this->getNonCompliantChecks() as $policyCheck) {
+      $messages[] = $policyCheck->getResultMessage();
+    }
+
+    return $messages;
+  }
+
+  /**
+   * Returns an array containing action messages of non-compliant checks.
+   *
+   * @return array
+   *   An array of action messages.
+   *
+   * @throws \Exception
+   */
+  public function getNonCompliantChecksActions()
+  {
+    $messages = [];
+
+    /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
+    foreach ($this->getNonCompliantChecks() as $policyCheck) {
+      $actions = $policyCheck->getActions();
+
+      foreach ($actions as $action) {
+        $messages[] = $action;
+      }
+    }
+
+    return $messages;
   }
 
   /**
@@ -122,7 +166,7 @@ class Report
    */
   public function getTotalChecks()
   {
-    return count($this->getPolicyChecks());
+    return count($this->getChecks());
   }
 
   /**
@@ -135,9 +179,9 @@ class Report
   public function getScore()
   {
     $totalChecks = $this->getTotalChecks();
-    $totalNotCompliant = count($this->getPolicyChecksNotCompliant());
+    $totalNonCompliant = count($this->getNonCompliantChecks());
 
-    return ($totalChecks - $totalNotCompliant);
+    return ($totalChecks - $totalNonCompliant);
   }
 
   /**
@@ -150,7 +194,7 @@ class Report
   public function getCompliantScorePercentage()
   {
     $totalChecks = $this->getTotalChecks();
-    $totalCompliantChecks = count($this->getPolicyChecksCompliant());
+    $totalCompliantChecks = count($this->getCompliantChecks());
 
     return round((100 * $totalCompliantChecks) / $totalChecks);
   }
@@ -164,7 +208,7 @@ class Report
    */
   public function getResult()
   {
-    if (count($this->getPolicyChecksNotCompliant()) > 0) {
+    if (count($this->getNonCompliantChecks()) > 0) {
       return self::REPORT_POLICY_NOT_COMPLIANT;
     }
 
@@ -185,14 +229,17 @@ class Report
       'timestamp' => time(),
       'result' => $this->getResult(),
       'total_policies' => $this->getTotalChecks(),
-      'total_compliant_policies' => count($this->getPolicyChecksCompliant()),
-      'total_not_compliant_policies' => count($this->getPolicyChecksNotCompliant()),
+      'total_compliant_policies' => count($this->getCompliantChecks()),
+      'total_non_compliant_policies' => count($this->getNonCompliantChecks()),
       'score_compliant_percentage' => $this->getCompliantScorePercentage(),
       'policies' => [],
     ];
 
+    // Makes non-compliant checks be listed first.
+    $checks = $this->getNonCompliantChecks() + $this->getCompliantChecks();
+
     /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
-    foreach ($this->getPolicyChecks() as $policyCheck) {
+    foreach ($checks as $policyCheck) {
       $summary['policies'][$policyCheck->getCategory()][$policyCheck->getName()] = [
         'name' => $policyCheck->getName(),
         'description' => $policyCheck->getDescription(),
@@ -205,18 +252,6 @@ class Report
     }
 
     return $summary;
-  }
-
-  /**
-   * Returns a JSON string containing the policy check results.
-   *
-   * @return string The results on JSON format.
-   *
-   * @throws \Exception
-   */
-  public function jsonExport()
-  {
-    return json_encode($this->getResultSummary());
   }
 
 }
