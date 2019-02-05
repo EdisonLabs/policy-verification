@@ -2,6 +2,7 @@
 
 namespace EdisonLabs\PolicyVerification\Command;
 
+use EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase;
 use EdisonLabs\PolicyVerification\Report;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
@@ -45,6 +46,17 @@ class PolicyVerificationCommand extends Command
 
         $this->data = $data;
         $this->report = new Report($this->data);
+
+        // Checks and includes a specific policy check class in the report.
+        $specificClass = $input->getOption('class');
+        if ($specificClass) {
+            if (!class_exists($specificClass)) {
+              throw new RuntimeException(sprintf('Class %s does not exist', $specificClass));
+            }
+
+            $specificClass = new $specificClass;
+            $this->setPolicyCheck($specificClass);
+        }
     }
 
     /**
@@ -58,6 +70,7 @@ class PolicyVerificationCommand extends Command
             ->setHelp('This command allows you to get results from policy checks')
             ->addOption('format', null, InputOption::VALUE_REQUIRED, 'The output format: table, json', 'table')
             ->addOption('data', null, InputOption::VALUE_REQUIRED, 'Pass custom data to the policy checks, which can be a file or a string containing JSON format')
+            ->addOption('class', null, InputOption::VALUE_REQUIRED, 'Specify a policy check class to be included in the list of checks to be reported')
         ;
     }
 
@@ -87,6 +100,21 @@ class PolicyVerificationCommand extends Command
         }
 
         throw new RuntimeException('Data parameter must be a valid JSON format');
+    }
+
+    /**
+     * Sets a policy check to report.
+     *
+     * @param \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck The policy check object.
+     */
+    public function setPolicyCheck(AbstractPolicyCheckBase $policyCheck)
+    {
+        if (!$this->report) {
+
+            return;
+        }
+
+        $this->report->setCheck($policyCheck);
     }
 
     /**

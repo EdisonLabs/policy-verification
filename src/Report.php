@@ -26,6 +26,13 @@ class Report
      */
     protected $policyChecks = [];
 
+  /**
+   * A flag indicating whether the policy checks were located or not.
+   *
+   * @var bool
+   */
+    protected $policyChecksLocated = false;
+
     /**
      * Report constructor.
      *
@@ -47,6 +54,16 @@ class Report
     }
 
     /**
+     * Sets a policy check.
+     *
+     * @param \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck The policy check object.
+     */
+    public function setCheck(AbstractPolicyCheckBase $policyCheck)
+    {
+        $this->policyChecks[] = $policyCheck;
+    }
+
+    /**
      * Gets the policy check instances.
      *
      * @return array An array containing the policy check instances.
@@ -55,7 +72,7 @@ class Report
      */
     public function getChecks()
     {
-        if (empty($this->policyChecks)) {
+        if (!$this->policyChecksLocated) {
             $containerBuilder = new ContainerBuilder($this->data);
             $containerBuilder = $containerBuilder->getContainerBuilder();
 
@@ -75,8 +92,10 @@ class Report
                     continue;
                 }
 
-                $this->policyChecks[] = $policyCheck;
+                $this->setCheck($policyCheck);
             }
+
+            $this->policyChecksLocated = true;
         }
 
         return $this->policyChecks;
@@ -193,6 +212,11 @@ class Report
     public function getCompliantScorePercentage()
     {
         $totalChecks = $this->getTotalChecks();
+
+        if (!$totalChecks) {
+          return 0;
+        }
+
         $totalCompliantChecks = count($this->getCompliantChecks());
 
         return round((100 * $totalCompliantChecks) / $totalChecks);
