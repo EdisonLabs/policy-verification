@@ -214,7 +214,7 @@ class Report
         $totalChecks = $this->getTotalChecks();
 
         if (!$totalChecks) {
-          return 0;
+            return 0;
         }
 
         $totalCompliantChecks = count($this->getCompliantChecks());

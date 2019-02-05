@@ -35,7 +35,7 @@ class PolicyVerificationCommandTest extends TestCase
             }
         }
 
-        require __DIR__ . '/../../ExamplePolicyCheck.php';
+        require __DIR__.'/../../ExamplePolicyCheck.php';
     }
 
     /**

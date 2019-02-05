@@ -34,6 +34,20 @@ class PolicyVerificationCommand extends Command
     protected $report;
 
     /**
+     * Sets a policy check to report.
+     *
+     * @param \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck The policy check object.
+     */
+    public function setPolicyCheck(AbstractPolicyCheckBase $policyCheck)
+    {
+        if (!$this->report) {
+            return;
+        }
+
+        $this->report->setCheck($policyCheck);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -51,10 +65,10 @@ class PolicyVerificationCommand extends Command
         $specificClass = $input->getOption('class');
         if ($specificClass) {
             if (!class_exists($specificClass)) {
-              throw new RuntimeException(sprintf('Class %s does not exist', $specificClass));
+                throw new RuntimeException(sprintf('Class %s does not exist', $specificClass));
             }
 
-            $specificClass = new $specificClass;
+            $specificClass = new $specificClass();
             $this->setPolicyCheck($specificClass);
         }
     }
@@ -100,21 +114,6 @@ class PolicyVerificationCommand extends Command
         }
 
         throw new RuntimeException('Data parameter must be a valid JSON format');
-    }
-
-    /**
-     * Sets a policy check to report.
-     *
-     * @param \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck The policy check object.
-     */
-    public function setPolicyCheck(AbstractPolicyCheckBase $policyCheck)
-    {
-        if (!$this->report) {
-
-            return;
-        }
-
-        $this->report->setCheck($policyCheck);
     }
 
     /**
