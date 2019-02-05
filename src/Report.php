@@ -93,7 +93,6 @@ class Report
     {
         return array_filter($this->getChecks(), function ($policyCheck) {
 
-            /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
             return $policyCheck->isCompliant();
         });
     }
@@ -109,7 +108,6 @@ class Report
     {
         return array_filter($this->getChecks(), function ($policyCheck) {
 
-            /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
             return $policyCheck->isNotCompliant();
         });
     }
