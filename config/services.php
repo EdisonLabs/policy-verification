@@ -15,19 +15,19 @@ $finder->name('EdisonLabs');
 
 // Register services.
 if ($finder->count() !== 0) {
-  $definition = new Definition();
-  $definition
+    $definition = new Definition();
+    $definition
     ->addArgument('%policy-verification.data%')
     ->setAutowired(true)
     ->setAutoconfigured(true)
     ->setPublic(true);
 
-  foreach ($finder as $folder) {
-    // $this is a reference to the current loader
-    $this->registerClasses(
+    foreach ($finder as $folder) {
+        // $this is a reference to the current loader
+        $this->registerClasses(
       $definition,
       'EdisonLabs\\PolicyVerification\\',
       $folder->getRealPath().'/PolicyVerification'
     );
-  }
+    }
 }
