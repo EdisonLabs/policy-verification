@@ -92,6 +92,7 @@ class Report
     public function getCompliantChecks()
     {
         return array_filter($this->getChecks(), function ($policyCheck) {
+
             /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
             return $policyCheck->isCompliant();
         });
@@ -107,6 +108,7 @@ class Report
     public function getNonCompliantChecks()
     {
         return array_filter($this->getChecks(), function ($policyCheck) {
+
             /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
             return $policyCheck->isNotCompliant();
         });
@@ -224,15 +226,15 @@ class Report
     public function getResultSummary()
     {
         $summary = [
-      'data' => $this->data,
-      'timestamp' => time(),
-      'result' => $this->getResult(),
-      'total_policies' => $this->getTotalChecks(),
-      'total_compliant_policies' => count($this->getCompliantChecks()),
-      'total_non_compliant_policies' => count($this->getNonCompliantChecks()),
-      'score_compliant_percentage' => $this->getCompliantScorePercentage(),
-      'policies' => [],
-    ];
+            'data' => $this->data,
+            'timestamp' => time(),
+            'result' => $this->getResult(),
+            'total_policies' => $this->getTotalChecks(),
+            'total_compliant_policies' => count($this->getCompliantChecks()),
+            'total_non_compliant_policies' => count($this->getNonCompliantChecks()),
+            'score_compliant_percentage' => $this->getCompliantScorePercentage(),
+            'policies' => [],
+        ];
 
         // Makes non-compliant checks be listed first.
         $checks = $this->getNonCompliantChecks() + $this->getCompliantChecks();
@@ -240,14 +242,14 @@ class Report
         /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
         foreach ($checks as $policyCheck) {
             $summary['policies'][$policyCheck->getCategory()][$policyCheck->getName()] = [
-        'name' => $policyCheck->getName(),
-        'description' => $policyCheck->getDescription(),
-        'category' => $policyCheck->getCategory(),
-        'result' => $policyCheck->isCompliant() ? self::REPORT_POLICY_COMPLIANT : self::REPORT_POLICY_NOT_COMPLIANT,
-        'message' => $policyCheck->getResultMessage(),
-        'actions' => $policyCheck->isNotCompliant() ? $policyCheck->getActions() : [],
-        'risk' => $policyCheck->getRiskLevel(),
-      ];
+                'name' => $policyCheck->getName(),
+                'description' => $policyCheck->getDescription(),
+                'category' => $policyCheck->getCategory(),
+                'result' => $policyCheck->isCompliant() ? self::REPORT_POLICY_COMPLIANT : self::REPORT_POLICY_NOT_COMPLIANT,
+                'message' => $policyCheck->getResultMessage(),
+                'actions' => $policyCheck->isNotCompliant() ? $policyCheck->getActions() : [],
+                'risk' => $policyCheck->getRiskLevel(),
+            ];
         }
 
         return $summary;

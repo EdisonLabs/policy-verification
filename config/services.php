@@ -25,9 +25,9 @@ if ($finder->count() !== 0) {
     foreach ($finder as $folder) {
         // $this is a reference to the current loader
         $this->registerClasses(
-      $definition,
-      'EdisonLabs\\PolicyVerification\\',
-      $folder->getRealPath().'/PolicyVerification'
-    );
+            $definition,
+            'EdisonLabs\\PolicyVerification\\',
+            $folder->getRealPath().'/PolicyVerification'
+        );
     }
 }

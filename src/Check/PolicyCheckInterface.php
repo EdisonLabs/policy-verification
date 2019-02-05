@@ -4,8 +4,6 @@ namespace EdisonLabs\PolicyVerification\Check;
 
 /**
  * Defines and interface for Policy checks.
- *
- * @package EdisonLabs\PolicyVerification\Check
  */
 interface PolicyCheckInterface
 {

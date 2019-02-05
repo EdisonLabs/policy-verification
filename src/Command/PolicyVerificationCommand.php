@@ -53,12 +53,12 @@ class PolicyVerificationCommand extends Command
     protected function configure()
     {
         $this
-      ->setName('edisonlabs:policy-verification')
-      ->setDescription('Edison Labs Policy verification')
-      ->setHelp('This command allows you to get results from policy checks')
-      ->addOption('format', null, InputOption::VALUE_REQUIRED, 'The output format: table, json', 'table')
-      ->addOption('data', null, InputOption::VALUE_REQUIRED, 'Pass custom data to the policy checks, which can be a file or a string containing JSON format')
-    ;
+            ->setName('edisonlabs:policy-verification')
+            ->setDescription('Edison Labs Policy verification')
+            ->setHelp('This command allows you to get results from policy checks')
+            ->addOption('format', null, InputOption::VALUE_REQUIRED, 'The output format: table, json', 'table')
+            ->addOption('data', null, InputOption::VALUE_REQUIRED, 'Pass custom data to the policy checks, which can be a file or a string containing JSON format')
+        ;
     }
 
     /**
@@ -92,7 +92,7 @@ class PolicyVerificationCommand extends Command
     /**
      * Outputs the Policy summary report on JSON format.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input Console input object.
+     * @param \Symfony\Component\Console\Input\InputInterface   $input  Console input object.
      * @param \Symfony\Component\Console\Output\OutputInterface $output Console output object.
      *
      * @throws \Exception
@@ -103,8 +103,9 @@ class PolicyVerificationCommand extends Command
         $io = $this->io;
 
         $format = $input->getOption('format');
-        if ($format == 'json') {
+        if ('json' == $format) {
             $output->writeln(json_encode($policySummary));
+
             return;
         }
 
@@ -134,24 +135,24 @@ class PolicyVerificationCommand extends Command
         $table = new Table($output);
         $table->setStyle('box');
         $table->setHeaders([
-      'Risk',
-      'Result',
-      'Name',
-      'Category',
-      'Result message',
-    ]);
+            'Risk',
+            'Result',
+            'Name',
+            'Category',
+            'Result message',
+        ]);
 
         $rows = [];
 
         foreach ($policySummary['policies'] as $policies) {
             foreach ($policies as $policy) {
                 $rows[] = [
-          strtoupper($policy['risk']),
-          strtoupper($policy['result']),
-          $policy['name'],
-          $policy['category'],
-          $policy['message'],
-        ];
+                    strtoupper($policy['risk']),
+                    strtoupper($policy['result']),
+                    $policy['name'],
+                    $policy['category'],
+                    $policy['message'],
+                ];
             }
         }
 

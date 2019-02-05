@@ -4,8 +4,6 @@ namespace EdisonLabs\PolicyVerification\Check;
 
 /**
  * Defines a base class for Policy checks.
- *
- * @package EdisonLabs\PolicyVerification\Check
  */
 abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
 {
