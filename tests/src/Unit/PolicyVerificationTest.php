@@ -59,7 +59,8 @@ class PolicyVerificationTest extends TestCase
      */
     public function testReport()
     {
-        $report = new Report([]);
+        $data = ['mydata' => 'value'];
+        $report = new Report($data);
         $check = $this->getMockBuilder('EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase')
           ->setConstructorArgs([])
           ->getMockForAbstractClass();
@@ -67,6 +68,8 @@ class PolicyVerificationTest extends TestCase
         $checks = $report->getChecks();
         $this->assertNotEmpty($checks);
         $this->assertTrue(is_array($checks));
+        $this->assertEquals($data, $report->getData());
+        $this->assertEquals(0, $report->getScore());
     }
 
     /**

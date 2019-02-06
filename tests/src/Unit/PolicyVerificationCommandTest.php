@@ -79,6 +79,6 @@ class PolicyVerificationCommandTest extends TestCase
         unset($output['timestamp']);
         $output = json_encode($output);
 
-        $this->assertContains('{"data":[],"result":"not compliant","total_policies":1,"total_compliant_policies":0,"total_non_compliant_policies":1,"score_compliant_percentage":0,"policies":{"Test":{"Example policy check":{"name":"Example policy check","description":"This is an example of a policy check","category":"Test","result":"not compliant","message":"The policy is not compliant","actions":["Just an action example."],"risk":"high"}}}}', $output);
+        $this->assertContains('{"data":{"mydata":"value"},"result":"not compliant","total_policies":1,"total_compliant_policies":0,"total_non_compliant_policies":1,"score_compliant_percentage":0,"policies":{"Test":{"Example policy check":{"name":"Example policy check","description":"This is an example of a policy check","category":"Test","result":"not compliant","message":"The policy is not compliant","actions":["Just an action example."],"risk":"high"}}}}', $output);
     }
 }
