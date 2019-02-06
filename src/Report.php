@@ -1,7 +1,8 @@
 <?php
 namespace EdisonLabs\PolicyVerification;
 
-use EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase;
+use EdisonLabs\PolicyVerification\Check\PolicyCheckInterface;
+use RuntimeException;
 
 /**
  * Implements class for Policies report.
@@ -56,9 +57,9 @@ class Report
     /**
      * Sets a policy check.
      *
-     * @param \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck The policy check object.
+     * @param \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck The policy check object.
      */
-    public function setCheck(AbstractPolicyCheckBase $policyCheck)
+    public function setCheck(PolicyCheckInterface $policyCheck)
     {
         $this->policyChecks[] = $policyCheck;
     }
@@ -88,8 +89,8 @@ class Report
                 $policyCheck = $containerBuilder->get($serviceName);
 
                 // Sanity check by class type.
-                if (!$policyCheck instanceof AbstractPolicyCheckBase) {
-                    continue;
+                if (!$policyCheck instanceof PolicyCheckInterface) {
+                    throw new RuntimeException(sprintf('The policy check class %s must be an instance of EdisonLabs\PolicyVerification\Check\PolicyCheckInterface', $serviceName));
                 }
 
                 $this->setCheck($policyCheck);
@@ -143,7 +144,7 @@ class Report
     {
         $messages = [];
 
-        /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
+        /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
         foreach ($this->getNonCompliantChecks() as $policyCheck) {
             $messages[] = $policyCheck->getResultMessage();
         }
@@ -163,7 +164,7 @@ class Report
     {
         $messages = [];
 
-        /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
+        /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
         foreach ($this->getNonCompliantChecks() as $policyCheck) {
             $actions = $policyCheck->getActions();
 
@@ -261,7 +262,7 @@ class Report
         // Makes non-compliant checks be listed first.
         $checks = $this->getNonCompliantChecks() + $this->getCompliantChecks();
 
-        /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck */
+        /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
         foreach ($checks as $policyCheck) {
             $summary['policies'][$policyCheck->getCategory()][$policyCheck->getName()] = [
                 'name' => $policyCheck->getName(),

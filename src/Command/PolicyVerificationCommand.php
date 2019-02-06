@@ -2,7 +2,7 @@
 
 namespace EdisonLabs\PolicyVerification\Command;
 
-use EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase;
+use EdisonLabs\PolicyVerification\Check\PolicyCheckInterface;
 use EdisonLabs\PolicyVerification\Report;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
@@ -36,9 +36,9 @@ class PolicyVerificationCommand extends Command
     /**
      * Sets a policy check to report.
      *
-     * @param \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $policyCheck The policy check object.
+     * @param \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck The policy check object.
      */
-    public function setPolicyCheck(AbstractPolicyCheckBase $policyCheck)
+    public function setPolicyCheck(PolicyCheckInterface $policyCheck)
     {
         if (!$this->report) {
             return;
@@ -91,7 +91,7 @@ class PolicyVerificationCommand extends Command
     /**
      * Converts and returns the data JSON parameter value to array.
      *
-     * @param string $data The data JSON value.
+     * @param string $data The data command option.
      *
      * @return array The data array.
      */
@@ -113,28 +113,20 @@ class PolicyVerificationCommand extends Command
             return $data;
         }
 
-        throw new RuntimeException('Data parameter must be a valid JSON format');
+        throw new RuntimeException('Data parameter must be a valid file or string with valid JSON format');
     }
 
     /**
-     * Outputs the Policy summary report on JSON format.
+     * Outputs the Policy summary report on table format.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input  Console input object.
-     * @param \Symfony\Component\Console\Output\OutputInterface $output Console output object.
+     * @param array                                             $policySummary The policy summary array. See Report->getResultSummary().
+     * @param \Symfony\Component\Console\Output\OutputInterface $output        Console output object.
      *
      * @throws \Exception
      */
-    protected function outputReport(InputInterface $input, OutputInterface $output)
+    protected function renderPolicySummaryAsTable($policySummary, OutputInterface $output)
     {
-        $policySummary = $this->report->getResultSummary();
         $io = $this->io;
-
-        $format = $input->getOption('format');
-        if ('json' == $format) {
-            $output->writeln(json_encode($policySummary));
-
-            return;
-        }
 
         // Prints result message.
         $score = $policySummary['score_compliant_percentage'];
@@ -192,6 +184,20 @@ class PolicyVerificationCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->outputReport($input, $output);
+        $policySummary = $this->report->getResultSummary();
+
+        $format = $input->getOption('format');
+        switch ($format) {
+          case 'json':
+            $output->writeln(json_encode($policySummary));
+            break;
+
+          case 'table':
+            $this->renderPolicySummaryAsTable($policySummary, $output);
+            break;
+
+          default:
+            throw new RuntimeException('Invalid format');
+        }
     }
 }
