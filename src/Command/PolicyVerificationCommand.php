@@ -188,16 +188,16 @@ class PolicyVerificationCommand extends Command
 
         $format = $input->getOption('format');
         switch ($format) {
-          case 'json':
-            $output->writeln(json_encode($policySummary));
-            break;
+            case 'json':
+                $output->writeln(json_encode($policySummary));
+                break;
 
-          case 'table':
-            $this->renderPolicySummaryAsTable($policySummary, $output);
-            break;
+            case 'table':
+                $this->renderPolicySummaryAsTable($policySummary, $output);
+                break;
 
-          default:
-            throw new RuntimeException('Invalid format');
+            default:
+                throw new RuntimeException('Invalid format');
         }
     }
 }
