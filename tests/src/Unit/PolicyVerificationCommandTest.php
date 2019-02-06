@@ -69,7 +69,7 @@ class PolicyVerificationCommandTest extends TestCase
         $tester->execute([
             '--format' => 'json',
             '--class' => '\EdisonLabs\PolicyVerification\Test\ExamplePolicyCheck',
-            '--data' => '{"mydata": "value"}'
+            '--data' => '{"mydata": "value"}',
         ]);
         $this->assertEquals(0, $tester->getStatusCode());
         $output = $tester->getDisplay();
