@@ -8,7 +8,17 @@
             "EdisonLabs\\PolicyVerification\\": "src/"
         }
     },
+    "bin": [
+        "policy-verification"
+    ],
+    "require": {
+        "symfony/config": "~4.0",
+        "symfony/console": "~4.0",
+        "symfony/dependency-injection": "~4.0",
+        "symfony/finder": "~4.0"
+    },
     "require-dev": {
-        "phpunit/phpunit": "^6.5"
+        "phpunit/phpunit": "^6.5",
+        "php-coveralls/php-coveralls": "^2.0"
     }
 }
