@@ -7,22 +7,22 @@ namespace EdisonLabs\PolicyVerification\Check;
  */
 abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
 {
-    const POLICY_COMPLIANT = 1;
-    const POLICY_NOT_COMPLIANT = 0;
-    const POLICY_RISK_LOW = 'low';
-    const POLICY_RISK_MEDIUM = 'medium';
-    const POLICY_RISK_HIGH = 'high';
-    const POLICY_RISK_CRITICAL = 'critical';
+    const POLICY_PASS = true;
+    const POLICY_FAIL = false;
+    const POLICY_SEVERITY_LOW = 'low';
+    const POLICY_SEVERITY_MEDIUM = 'medium';
+    const POLICY_SEVERITY_HIGH = 'high';
+    const POLICY_SEVERITY_CRITICAL = 'critical';
 
     /**
-     * Data passed in for checks and report.
+     * Data passed in for checks.
      *
      * @var array
      */
     protected $data = [];
 
     /**
-     * The policy check result constant, compliant or not compliant.
+     * The policy check result constants pass or fail.
      *
      * @var int
      */
@@ -31,7 +31,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     /**
      * AbstractPolicyCheckBase constructor.
      *
-     * @param array $data An array containing data to be passed in for checks and reports.
+     * @param array $data An array containing data to be passed in for checks.
      */
     public function __construct(array $data = [])
     {
@@ -56,17 +56,25 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     /**
      * {@inheritdoc}
      */
-    abstract public function getRiskLevel();
+    abstract public function getSeverity();
 
     /**
      * {@inheritdoc}
      */
-    abstract public function getResultCompliantMessage();
+    abstract public function getResultPassMessage();
 
     /**
      * {@inheritdoc}
      */
-    abstract public function getResultNotCompliantMessage();
+    abstract public function getResultFailMessage();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWarningMessage()
+    {
+        return null;
+    }
 
     /**
      * {@inheritdoc}
@@ -76,7 +84,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     /**
      * Gets the policy check result.
      *
-     * @return int Constants indicating whether the policy is compliant or not.
+     * @return bool Constants indicating pass or fail.
      */
     public function getResult()
     {
@@ -94,35 +102,35 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
      */
     public function getResultMessage()
     {
-        if ($this->getResult() == self::POLICY_COMPLIANT) {
-            return $this->getResultCompliantMessage();
+        if ($this->getResult() == self::POLICY_PASS) {
+            return $this->getResultPassMessage();
         }
 
-        return $this->getResultNotCompliantMessage();
+        return $this->getResultFailMessage();
     }
 
     /**
-     * Checks whether policy is compliant.
+     * Checks whether is a pass policy or not.
      *
      * @return bool TRUE in case of success, FALSE otherwise.
      */
-    public function isCompliant()
+    public function isPass()
     {
-        return $this->getResult() == self::POLICY_COMPLIANT;
+        return $this->getResult() == self::POLICY_PASS;
     }
 
     /**
-     * Checks whether policy is not compliant.
+     * Checks whether is a fail policy or not.
      *
      * @return bool TRUE in case of success, FALSE otherwise.
      */
-    public function isNotCompliant()
+    public function isFail()
     {
-        return $this->getResult() == self::POLICY_NOT_COMPLIANT;
+        return $this->getResult() == self::POLICY_FAIL;
     }
 
     /**
-     * Returns the policy data array.
+     * Returns the data array.
      *
      * @return array The policy data.
      */

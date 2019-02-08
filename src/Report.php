@@ -10,11 +10,9 @@ use RuntimeException;
 class Report
 {
     const POLICY_VERIFICATION_NAMESPACE = 'EdisonLabs\PolicyVerification';
-    const REPORT_POLICY_COMPLIANT = 'compliant';
-    const REPORT_POLICY_NOT_COMPLIANT = 'not compliant';
 
     /**
-     * Data passed in for checks and report.
+     * Data passed in for checks.
      *
      * @var array
      */
@@ -37,7 +35,7 @@ class Report
     /**
      * Report constructor.
      *
-     * @param array $data An array containing data to be passed in for checks and reports.
+     * @param array $data An array containing data to be passed in for checks.
      */
     public function __construct(array $data = [])
     {
@@ -103,74 +101,105 @@ class Report
     }
 
     /**
-     * Gets the compliant policy check instances.
+     * Gets the pass policy check instances.
      *
-     * @return array An array containing the compliant policy check instances.
+     * @return array An array containing the pass policy check instances.
      *
      * @throws \Exception
      */
-    public function getCompliantChecks()
+    public function getPassChecks()
     {
         return array_filter($this->getChecks(), function ($policyCheck) {
 
-            return $policyCheck->isCompliant();
+            return $policyCheck->isPass();
         });
     }
 
     /**
-     * Gets the not compliant policy check instances.
+     * Gets the fail policy check instances.
      *
-     * @return array An array containing the not compliant policy check instances.
+     * @return array An array containing the fail policy check instances.
      *
      * @throws \Exception
      */
-    public function getNonCompliantChecks()
+    public function getFailChecks()
     {
         return array_filter($this->getChecks(), function ($policyCheck) {
 
-            return $policyCheck->isNotCompliant();
+            return $policyCheck->isFail();
         });
     }
 
     /**
-     * Returns an array containing result messages of non-compliant checks.
+     * Returns an array containing result messages of fail checks.
      *
      * @return array
      *   An array of messages.
      *
      * @throws \Exception
      */
-    public function getNonCompliantChecksResultMessages()
+    public function getFailChecksResultMessages()
     {
         $messages = [];
 
         /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
-        foreach ($this->getNonCompliantChecks() as $policyCheck) {
-            $messages[] = $policyCheck->getResultMessage();
+        foreach ($this->getFailChecks() as $policyCheck) {
+            $messages[] = $policyCheck->getResultFailMessage();
         }
 
         return $messages;
     }
 
     /**
-     * Returns an array containing action messages of non-compliant checks.
+     * Returns an array containing action messages of failed policy checks.
+     *
+     * @param bool A boolean indicating to include the policy name prefix in the messages or not.
      *
      * @return array
      *   An array of action messages.
      *
      * @throws \Exception
      */
-    public function getNonCompliantChecksActions()
+    public function getFailChecksActions($namePrefix = false)
     {
         $messages = [];
 
         /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
-        foreach ($this->getNonCompliantChecks() as $policyCheck) {
+        foreach ($this->getFailChecks() as $policyCheck) {
+            $prefix = $namePrefix ? $policyCheck->getName().': ' : '';
             $actions = $policyCheck->getActions();
 
             foreach ($actions as $action) {
-                $messages[] = $action;
+                $messages[] = $prefix.$action;
             }
+        }
+
+        return $messages;
+    }
+
+  /**
+   * Returns an array containing warning messages from policy checks.
+   *
+   * @param bool A boolean indicating to include the policy name prefix in the message or not.
+   *
+   * @return array
+   *   An array of messages.
+   *
+   * @throws \Exception
+   */
+    public function getWarningMessages($namePrefix = false)
+    {
+        $messages = [];
+
+        /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
+        foreach ($this->getChecks() as $policyCheck) {
+            $message = $policyCheck->getWarningMessage();
+            if (!$message) {
+                continue;
+            }
+
+            $prefix = $namePrefix ? $policyCheck->getName().': ' : '';
+            $messages[] = $prefix.$message;
         }
 
         return $messages;
@@ -198,19 +227,19 @@ class Report
     public function getScore()
     {
         $totalChecks = $this->getTotalChecks();
-        $totalNonCompliant = count($this->getNonCompliantChecks());
+        $totalFailChecks = count($this->getFailChecks());
 
-        return ($totalChecks - $totalNonCompliant);
+        return ($totalChecks - $totalFailChecks);
     }
 
     /**
-     * Gets the score percentage for compliant checks.
+     * Gets the score percentage for fail checks.
      *
      * @return int The score percentage.
      *
      * @throws \Exception
      */
-    public function getCompliantScorePercentage()
+    public function getScorePercentage()
     {
         $totalChecks = $this->getTotalChecks();
 
@@ -218,25 +247,41 @@ class Report
             return 0;
         }
 
-        $totalCompliantChecks = count($this->getCompliantChecks());
+        $totalPassChecks = count($this->getPassChecks());
 
-        return round((100 * $totalCompliantChecks) / $totalChecks);
+        return round((100 * $totalPassChecks) / $totalChecks);
     }
 
     /**
      * Gets the report result.
      *
-     * @return string Compliant, not compliant.
+     * @return bool True if pass, false if fail.
      *
      * @throws \Exception
      */
     public function getResult()
     {
-        if (count($this->getNonCompliantChecks()) > 0) {
-            return self::REPORT_POLICY_NOT_COMPLIANT;
+        if (count($this->getFailChecks()) > 0) {
+            return false;
         }
 
-        return self::REPORT_POLICY_COMPLIANT;
+        return true;
+    }
+
+    /**
+     * Converts a string to a machine name.
+     *
+     * @param mixed $value The value to be transformed.
+     *
+     * @return string The newly transformed value.
+     */
+    public function convertToMachineName($value)
+    {
+        $newValue = strtolower($value);
+        $newValue = preg_replace('/[^a-z0-9_]+/', '_', $newValue);
+        $newValue = preg_replace('/_+/', '_', $newValue);
+
+        return $newValue;
     }
 
     /**
@@ -249,29 +294,41 @@ class Report
     public function getResultSummary()
     {
         $summary = [
-            'data' => $this->data,
+            'data' => $this->getData(),
             'timestamp' => time(),
             'result' => $this->getResult(),
-            'total_policies' => $this->getTotalChecks(),
-            'total_compliant_policies' => count($this->getCompliantChecks()),
-            'total_non_compliant_policies' => count($this->getNonCompliantChecks()),
-            'score_compliant_percentage' => $this->getCompliantScorePercentage(),
+            'summary' => [
+                'total' => $this->getTotalChecks(),
+                'total_pass' => count($this->getPassChecks()),
+                'total_fail' => count($this->getFailChecks()),
+                'percentage_pass' => $this->getScorePercentage(),
+            ],
             'policies' => [],
         ];
 
-        // Makes non-compliant checks be listed first.
-        $checks = $this->getNonCompliantChecks() + $this->getCompliantChecks();
+        // Include summary of messages.
+        $summary['messages'] = [
+            'fail' => $this->getFailChecksResultMessages(),
+            'action' => $this->getFailChecksActions(),
+            'warning' => $this->getWarningMessages(),
+        ];
+
+        // Makes fail checks be listed first.
+        $checks = $this->getFailChecks() + $this->getPassChecks();
 
         /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
         foreach ($checks as $policyCheck) {
-            $summary['policies'][$policyCheck->getCategory()][$policyCheck->getName()] = [
+            $categoryMachineName = $this->convertToMachineName($policyCheck->getCategory());
+            $policyMachineName = $this->convertToMachineName($policyCheck->getName());
+            $summary['policies'][$categoryMachineName][$policyMachineName] = [
                 'name' => $policyCheck->getName(),
                 'description' => $policyCheck->getDescription(),
                 'category' => $policyCheck->getCategory(),
-                'result' => $policyCheck->isCompliant() ? self::REPORT_POLICY_COMPLIANT : self::REPORT_POLICY_NOT_COMPLIANT,
+                'result' => $policyCheck->getResult(),
                 'message' => $policyCheck->getResultMessage(),
-                'actions' => $policyCheck->isNotCompliant() ? $policyCheck->getActions() : [],
-                'risk' => $policyCheck->getRiskLevel(),
+                'message_warning' => $policyCheck->getWarningMessage(),
+                'actions' => $policyCheck->isFail() ? $policyCheck->getActions() : [],
+                'severity' => $policyCheck->getSeverity(),
             ];
         }
 

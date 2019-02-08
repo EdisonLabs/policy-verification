@@ -30,32 +30,39 @@ interface PolicyCheckInterface
     public function getCategory();
 
     /**
-     * Gets the risk level for the policy check.
+     * Gets the severity for the policy check.
      *
-     * @return string Constants indicating the risks low, medium, high or critical.
+     * @return string Constants indicating the severity low, medium, high or critical.
      */
-    public function getRiskLevel();
+    public function getSeverity();
 
     /**
      * Performs the policy check.
      *
-     * @return int Constants indicating whether the policy is compliant or not.
+     * @return bool Constants indicating pass or fail.
      */
     public function check();
 
     /**
-     * Gets a description of what happened in a passed check.
+     * Gets a description of what happened in a pass check.
      *
-     * @return string The policy compliant check result message.
+     * @return string The policy check result pass message.
      */
-    public function getResultCompliantMessage();
+    public function getResultPassMessage();
 
     /**
-     * Gets the description of what happened in a failed check.
+     * Gets the description of what happened in a fail check.
      *
-     * @return string The policy not compliant check result message.
+     * @return string The policy check result fail message.
      */
-    public function getResultNotCompliantMessage();
+    public function getResultFailMessage();
+
+    /**
+     * Returns a warning message regardless of the check result.
+     *
+     * @return string The policy check result warning message.
+     */
+    public function getWarningMessage();
 
     /**
      * Gets action items to perform if the check did not pass.
