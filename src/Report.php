@@ -153,7 +153,7 @@ class Report
     /**
      * Returns an array containing action messages of failed policy checks.
      *
-     * @param bool A boolean indicating to include the policy name prefix in the messages or not.
+     * @param bool $namePrefix A boolean indicating to include the policy name prefix in the messages or not.
      *
      * @return array
      *   An array of action messages.
@@ -180,7 +180,7 @@ class Report
   /**
    * Returns an array containing warning messages from policy checks.
    *
-   * @param bool A boolean indicating to include the policy name prefix in the message or not.
+   * @param bool $namePrefix A boolean indicating to include the policy name prefix in the message or not.
    *
    * @return array
    *   An array of messages.

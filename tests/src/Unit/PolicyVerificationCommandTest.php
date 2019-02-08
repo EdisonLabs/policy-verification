@@ -82,8 +82,8 @@ class PolicyVerificationCommandTest extends TestCase
 
         // Test pass result output.
         $tester->execute([
-          '--class' => '\EdisonLabs\PolicyVerification\Test\ExamplePolicyCheck',
-          '--data' => __DIR__.'/../../data.json',
+            '--class' => '\EdisonLabs\PolicyVerification\Test\ExamplePolicyCheck',
+            '--data' => __DIR__.'/../../data.json',
         ]);
         $output = $tester->getDisplay();
 
@@ -93,9 +93,9 @@ class PolicyVerificationCommandTest extends TestCase
 
         // Test pass JSON output.
         $tester->execute([
-          '--format' => 'json',
-          '--class' => '\EdisonLabs\PolicyVerification\Test\ExamplePolicyCheck',
-          '--data' => __DIR__.'/../../data.json',
+            '--format' => 'json',
+            '--class' => '\EdisonLabs\PolicyVerification\Test\ExamplePolicyCheck',
+            '--data' => __DIR__.'/../../data.json',
         ]);
         $this->assertEquals(0, $tester->getStatusCode());
         $output = $tester->getDisplay();
@@ -110,13 +110,13 @@ class PolicyVerificationCommandTest extends TestCase
         // Test exceptions.
         $this->expectException(RuntimeException::class);
         $tester->execute([
-          '--class' => '\NotAClass',
+            '--class' => '\NotAClass',
         ]);
         $tester->execute([
-          '--data' => 'not valid data format, must be JSON',
+            '--data' => 'not valid data format, must be JSON',
         ]);
         $tester->execute([
-          '--format' => 'Invalid format',
+            '--format' => 'Invalid format',
         ]);
     }
 }
