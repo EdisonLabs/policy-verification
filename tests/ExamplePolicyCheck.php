@@ -37,25 +37,33 @@ class ExamplePolicyCheck extends AbstractPolicyCheckBase
     /**
      * {@inheritdoc}
      */
-    public function getRiskLevel()
+    public function getSeverity()
     {
-        return parent::POLICY_RISK_HIGH;
+        return parent::POLICY_SEVERITY_HIGH;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getResultCompliantMessage()
+    public function getResultPassMessage()
     {
-        return 'The policy is compliant';
+        return 'The policy passes';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getResultNotCompliantMessage()
+    public function getResultFailMessage()
     {
-        return 'The policy is not compliant';
+        return 'The policy fails';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWarningMessage()
+    {
+        return 'Just an example of warning message';
     }
 
     /**
@@ -73,6 +81,12 @@ class ExamplePolicyCheck extends AbstractPolicyCheckBase
      */
     public function check()
     {
-        return parent::POLICY_NOT_COMPLIANT;
+        $data = $this->getData();
+
+        if (isset($data['pass']) && $data['pass'] === 1) {
+            return parent::POLICY_PASS;
+        }
+
+        return parent::POLICY_FAIL;
     }
 }

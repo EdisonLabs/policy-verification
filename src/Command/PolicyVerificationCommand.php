@@ -68,7 +68,7 @@ class PolicyVerificationCommand extends Command
                 throw new RuntimeException(sprintf('Class %s does not exist', $specificClass));
             }
 
-            $specificClass = new $specificClass();
+            $specificClass = new $specificClass($this->data);
             $this->setPolicyCheck($specificClass);
         }
     }
@@ -128,55 +128,50 @@ class PolicyVerificationCommand extends Command
     {
         $io = $this->io;
 
+        $summaryPolicies = $policySummary['policies'];
+        if (!$summaryPolicies) {
+            $io->block("There is no policy available", null, 'fg=black;bg=yellow', ' ', true);
+
+            return;
+        }
+
         // Prints result message.
-        $score = $policySummary['score_compliant_percentage'];
-        $totalPolicies = $policySummary['total_policies'];
-        $totalCompliantPolicies = $policySummary['total_compliant_policies'];
-        if ($policySummary['result'] == Report::REPORT_POLICY_NOT_COMPLIANT) {
-            $io->block("Score $score% ($totalCompliantPolicies of $totalPolicies)", 'NOT COMPLIANT', 'fg=white;bg=red', ' ', true);
+        $score = $policySummary['summary']['percentage_pass'];
+        $totalPolicies = $policySummary['summary']['total'];
+        $totalPassPolicies = $policySummary['summary']['total_pass'];
+        if ($policySummary['result'] === false) {
+            $io->block("Score $score% ($totalPassPolicies of $totalPolicies)", 'FAIL', 'fg=white;bg=red', ' ', true);
         } else {
-            $io->block("Score 100% ($totalCompliantPolicies of $totalPolicies)", 'COMPLIANT', 'fg=white;bg=green', ' ', true);
+            $io->block("Score 100% ($totalPassPolicies of $totalPolicies)", 'PASS', 'fg=white;bg=green', ' ', true);
         }
 
-        // Prints non-compliant check results.
-        $nonComplianceMessages = $this->report->getNonCompliantChecksResultMessages();
-        if ($nonComplianceMessages) {
-            $io->listing($nonComplianceMessages);
+        // Prints actions.
+        $failChecksActions = $this->report->getFailChecksActions(true);
+        if ($failChecksActions) {
+            $io->section('Actions');
+            $io->listing($failChecksActions);
         }
 
-        // Prints actions:
-        $nonComplianceActions = $this->report->getNonCompliantChecksActions();
-        if ($nonComplianceActions) {
-            $io->text('Actions:');
-            $io->listing($this->report->getNonCompliantChecksActions());
+        // Prints warning messages.
+        $warningMessages = $this->report->getWarningMessages(true);
+        if ($warningMessages) {
+            $io->section('Warnings');
+            $io->listing($warningMessages);
         }
 
-        $table = new Table($output);
-        $table->setStyle('box');
-        $table->setHeaders([
-            'Risk',
-            'Result',
-            'Name',
-            'Category',
-            'Result message',
-        ]);
-
-        $rows = [];
-
-        foreach ($policySummary['policies'] as $policies) {
+        // Print results.
+        $io->section('Results');
+        foreach ($summaryPolicies as $policies) {
             foreach ($policies as $policy) {
-                $rows[] = [
-                    strtoupper($policy['risk']),
-                    strtoupper($policy['result']),
-                    $policy['name'],
-                    $policy['category'],
-                    $policy['message'],
-                ];
+                $result = $policy['result'] ? 'PASS' : 'FAIL';
+                $resultColor = $policy['result'] ? 'green' : 'red';
+                $name = $policy['name'];
+                $message = $policy['message'];
+                $severity = strtoupper($policy['severity']);
+
+                $io->writeln("<fg=$resultColor;options=bold>[$result]</> ($severity) $name: $message");
             }
         }
-
-        $table->setRows($rows);
-        $table->render();
     }
 
     /**

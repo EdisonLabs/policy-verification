@@ -6,8 +6,8 @@
 ## Overview
 Policy verification is a simple library that provides base classes for creating and reporting security policy checks.
 
-Each policy check returns as a result whether the policy is compliant or not.
-Other information is also reported like the actions to be taken if the policy is not compliant.
+Each policy check returns as a result whether the policy passes or not.
+Other information is also reported like the actions to be taken if the policy is failing.
 
 ## Usage
 This library does not provide any policy check by default. To create new checks, [create a new Composer package](https://getcomposer.org/doc/01-basic-usage.md) and add a dependency to it.
@@ -50,20 +50,25 @@ class PhpVersion extends AbstractPolicyCheckBase
         return parent::POLICY_RISK_HIGH;
     }
 
-    public function getResultCompliantMessage()
+    public function getResultPassMessage()
     {
         return 'The system is running a recent version of PHP';
     }
 
-    public function getResultNotCompliantMessage()
+    public function getResultFailMessage()
     {
         return 'The system is running an older version of PHP';
+    }
+    
+    public function getWarningMessage()
+    {
+        return 'PHP 7.1 will have security support up to Dec 2019';
     }
 
     public function getActions()
     {
         return [
-            'Upgrade to PHP7 or greater'
+            'Upgrade to PHP 7 or greater'
         ];
     }
 
@@ -72,10 +77,10 @@ class PhpVersion extends AbstractPolicyCheckBase
         $phpVersion = phpversion();
 
         if ($phpVersion[0] < 7) {
-            return parent::POLICY_NOT_COMPLIANT;
+            return parent::POLICY_FAIL;
         }
 
-        return parent::POLICY_COMPLIANT;
+        return parent::POLICY_PASS;
     }
 }
 ```
@@ -112,16 +117,17 @@ print_r($report->getResultSummary());
 
 // Other report methods.
 $report->getChecks();
-$report->getCompliantChecks();
-$report->getCompliantScorePercentage();
+$report->getPassChecks();
+$report->getScorePercentage();
 $report->getData();
-$report->getNonCompliantChecks();
-$report->getNonCompliantChecksActions();
-$report->getNonCompliantChecksResultMessages();
+$report->getFailChecks();
+$report->getFailChecksActions();
+$report->getFailChecksResultMessages();
 $report->getResult();
 $report->getResultSummary();
 $report->getScore();
 $report->getTotalChecks();
+$report->getWarningMessages();
 $report->setCheck();
 ```
 
