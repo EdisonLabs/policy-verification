@@ -85,9 +85,10 @@ class PolicyVerificationTest extends TestCase
             'getName',
             'getDescription',
             'getCategory',
-            'getRiskLevel',
-            'getResultCompliantMessage',
-            'getResultNotCompliantMessage',
+            'getSeverity',
+            'getResultPassMessage',
+            'getResultFailMessage',
+            'getWarningMessage',
             'getActions',
         ])
         ->setConstructorArgs([['mytestdata' => 'ok']])
@@ -95,7 +96,7 @@ class PolicyVerificationTest extends TestCase
 
         $checkBaseMock->expects($this->once())
         ->method('check')
-        ->willReturn(AbstractPolicyCheckBase::POLICY_COMPLIANT);
+        ->willReturn(AbstractPolicyCheckBase::POLICY_PASS);
 
         $checkBaseMock->expects($this->once())
         ->method('getName')
@@ -110,16 +111,20 @@ class PolicyVerificationTest extends TestCase
         ->willReturn('Test');
 
         $checkBaseMock->expects($this->once())
-        ->method('getRiskLevel')
-        ->willReturn(AbstractPolicyCheckBase::POLICY_RISK_LOW);
+        ->method('getSeverity')
+        ->willReturn(AbstractPolicyCheckBase::POLICY_SEVERITY_LOW);
 
         $checkBaseMock->expects($this->any())
-        ->method('getResultCompliantMessage')
-        ->willReturn('This policy is compliant');
+        ->method('getResultPassMessage')
+        ->willReturn('This policy passes');
 
         $checkBaseMock->expects($this->once())
-        ->method('getResultNotCompliantMessage')
-        ->willReturn('This policy is not compliant');
+        ->method('getResultFailMessage')
+        ->willReturn('This policy fails');
+
+        $checkBaseMock->expects($this->once())
+        ->method('getWarningMessage')
+        ->willReturn('Just an example of warning message');
 
         $checkBaseMock->expects($this->once())
         ->method('getActions')
@@ -134,13 +139,14 @@ class PolicyVerificationTest extends TestCase
         $this->assertEquals('Test policy Check', $checkBaseMock->getName());
         $this->assertEquals('Test policy Check description', $checkBaseMock->getDescription());
         $this->assertEquals('Test', $checkBaseMock->getCategory());
-        $this->assertEquals(AbstractPolicyCheckBase::POLICY_RISK_LOW, $checkBaseMock->getRiskLevel());
-        $this->assertEquals('This policy is compliant', $checkBaseMock->getResultCompliantMessage());
-        $this->assertEquals('This policy is not compliant', $checkBaseMock->getResultNotCompliantMessage());
+        $this->assertEquals(AbstractPolicyCheckBase::POLICY_SEVERITY_LOW, $checkBaseMock->getSeverity());
+        $this->assertEquals('This policy passes', $checkBaseMock->getResultPassMessage());
+        $this->assertEquals('This policy fails', $checkBaseMock->getResultFailMessage());
+        $this->assertEquals('Just an example of warning message', $checkBaseMock->getWarningMessage());
         $this->assertEquals(['First action for test', 'Second action for test'], $checkBaseMock->getActions());
-        $this->assertEquals(AbstractPolicyCheckBase::POLICY_COMPLIANT, $checkBaseMock->getResult());
-        $this->assertEquals('This policy is compliant', $checkBaseMock->getResultMessage());
-        $this->assertTrue($checkBaseMock->isCompliant());
-        $this->assertFalse($checkBaseMock->isNotCompliant());
+        $this->assertEquals(AbstractPolicyCheckBase::POLICY_PASS, $checkBaseMock->getResult());
+        $this->assertEquals('This policy passes', $checkBaseMock->getResultMessage());
+        $this->assertTrue($checkBaseMock->isPass());
+        $this->assertFalse($checkBaseMock->isFail());
     }
 }
