@@ -4,7 +4,18 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Finder\Finder;
 
 // Set composer vendor path.
-$composerVendor = str_replace('/autoload.php', '', COMPOSER_INSTALL);
+$composerSources = [
+    __DIR__.'/../../../autoload.php',
+    __DIR__.'/../vendor/autoload.php',
+];
+
+$composerVendor = null;
+foreach ($composerSources as $autoload) {
+    if (file_exists($autoload)) {
+        $composerVendor = str_replace('/autoload.php', '', $autoload);
+        break;
+    }
+}
 
 // Find packages using the Policy check classes.
 $finder = new Finder();
