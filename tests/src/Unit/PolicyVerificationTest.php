@@ -15,27 +15,6 @@ use PHPUnit\Framework\TestCase;
 class PolicyVerificationTest extends TestCase
 {
 
-  /**
-   * {@inheritdoc}
-   */
-    protected function setUp()
-    {
-        if (!defined('COMPOSER_INSTALL')) {
-            $root = __DIR__.'/../../';
-            $sources = [
-                $root.'/../../autoload.php',
-                $root.'/../vendor/autoload.php',
-                $root.'/vendor/autoload.php',
-            ];
-            foreach ($sources as $file) {
-                if (file_exists($file)) {
-                    define('COMPOSER_INSTALL', $file);
-                    break;
-                }
-            }
-        }
-    }
-
     /**
      * Basic test to get success result.
      */
@@ -62,7 +41,6 @@ class PolicyVerificationTest extends TestCase
         $data = ['mydata' => 'value'];
         $report = new Report($data);
         $check = $this->getMockBuilder('EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase')
-          ->setConstructorArgs([])
           ->getMockForAbstractClass();
         $report->setCheck($check);
         $checks = $report->getChecks();
@@ -91,8 +69,9 @@ class PolicyVerificationTest extends TestCase
             'getWarningMessage',
             'getActions',
         ])
-        ->setConstructorArgs([['mytestdata' => 'ok']])
         ->getMockForAbstractClass();
+
+        $checkBaseMock->setData(['mytestdata' => 'ok']);
 
         $checkBaseMock->expects($this->once())
         ->method('check')

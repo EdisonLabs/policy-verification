@@ -70,4 +70,18 @@ interface PolicyCheckInterface
      * @return array Returns a list containing the action messages.
      */
     public function getActions();
+
+    /**
+     * Sets the data array.
+     *
+     * @param array The policy data.
+     */
+    public function setData(array $data = []);
+
+    /**
+     * Returns the data array.
+     *
+     * @return array The policy data.
+     */
+    public function getData();
 }

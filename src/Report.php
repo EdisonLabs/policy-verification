@@ -39,6 +39,16 @@ class Report
      */
     public function __construct(array $data = [])
     {
+        $this->setData($data);
+    }
+
+    /**
+     * Sets the data array.
+     *
+     * @param array The data.
+     */
+    public function setData(array $data = [])
+    {
         $this->data = $data;
     }
 
@@ -59,6 +69,8 @@ class Report
      */
     public function setCheck(PolicyCheckInterface $policyCheck)
     {
+        $policyCheck->setData($this->getData());
+
         $this->policyChecks[] = $policyCheck;
     }
 
@@ -72,7 +84,7 @@ class Report
     public function getChecks()
     {
         if (!$this->policyChecksLocated) {
-            $containerBuilder = new ContainerBuilder($this->data);
+            $containerBuilder = new ContainerBuilder();
             $containerBuilder = $containerBuilder->getContainerBuilder();
 
             $services = $containerBuilder->getServiceIds();

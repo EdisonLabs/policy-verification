@@ -29,16 +29,6 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     protected $result = null;
 
     /**
-     * AbstractPolicyCheckBase constructor.
-     *
-     * @param array $data An array containing data to be passed in for checks.
-     */
-    public function __construct(array $data = [])
-    {
-        $this->data = $data;
-    }
-
-    /**
      * {@inheritdoc}
      */
     abstract public function getName();
@@ -127,6 +117,16 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     public function isFail()
     {
         return $this->getResult() == self::POLICY_FAIL;
+    }
+
+    /**
+     * Sets the data array.
+     *
+     * @param array The policy data.
+     */
+    public function setData(array $data = [])
+    {
+        $this->data = $data;
     }
 
     /**

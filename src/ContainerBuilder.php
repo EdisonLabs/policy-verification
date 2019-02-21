@@ -18,17 +18,14 @@ class ContainerBuilder
     /**
      * ContainerBuilder constructor.
      *
-     * @param array $data The custom data array.
-     *
      * @throws \Exception
      */
-    public function __construct(array $data = [])
+    public function __construct()
     {
         $containerBuilder = new SymfonyContainerBuilder();
         $loader = new PhpFileLoader($containerBuilder, new FileLocator(__DIR__));
         $loader->load(self::SERVICES_PHP_FILE);
 
-        $containerBuilder->setParameter('policy-verification.data', $data);
         $containerBuilder->compile();
 
         $this->containerBuilder = $containerBuilder;

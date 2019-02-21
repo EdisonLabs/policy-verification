@@ -119,6 +119,7 @@ print_r($report->getResultSummary());
 $report->getChecks();
 $report->getPassChecks();
 $report->getScorePercentage();
+$report->setData($data);
 $report->getData();
 $report->getFailChecks();
 $report->getFailChecksActions();
@@ -128,7 +129,7 @@ $report->getResultSummary();
 $report->getScore();
 $report->getTotalChecks();
 $report->getWarningMessages();
-$report->setCheck();
+$report->setCheck($check);
 ```
 
 ### Command

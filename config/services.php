@@ -28,9 +28,6 @@ $finder->name('EdisonLabs');
 if ($finder->count() !== 0) {
     $definition = new Definition();
     $definition
-    ->addArgument('%policy-verification.data%')
-    ->setAutowired(true)
-    ->setAutoconfigured(true)
     ->setPublic(true);
 
     foreach ($finder as $folder) {
