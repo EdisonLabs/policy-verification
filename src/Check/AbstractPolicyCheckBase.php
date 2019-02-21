@@ -122,7 +122,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     /**
      * Sets the data array.
      *
-     * @param array The policy data.
+     * @param array $data The policy data.
      */
     public function setData(array $data = [])
     {

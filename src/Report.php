@@ -45,7 +45,7 @@ class Report
     /**
      * Sets the data array.
      *
-     * @param array The data.
+     * @param array $data The data.
      */
     public function setData(array $data = [])
     {
