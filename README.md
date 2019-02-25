@@ -45,9 +45,9 @@ class PhpVersion extends AbstractPolicyCheckBase
         return 'PHP';
     }
 
-    public function getRiskLevel()
+    public function getSeverity()
     {
-        return parent::POLICY_RISK_HIGH;
+        return parent::POLICY_SEVERITY_HIGH;
     }
 
     public function getResultPassMessage()
