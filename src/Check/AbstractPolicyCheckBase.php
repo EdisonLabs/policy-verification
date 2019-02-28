@@ -29,6 +29,34 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     protected $result = null;
 
     /**
+     * An array containing action messages.
+     *
+     * @var array
+     */
+    protected $actions = [];
+
+    /**
+     * An array containing warning messages.
+     *
+     * @var array
+     */
+    protected $warnings = [];
+
+    /**
+     * An array containing check requirement error messages.
+     *
+     * @var array
+     */
+    protected $requirementErrors = [];
+
+    /**
+     * A boolean indicating whether the requirements were checked.
+     *
+     * @var bool
+     */
+    protected $requirementsChecked = false;
+
+    /**
      * {@inheritdoc}
      */
     abstract public function getName();
@@ -61,15 +89,123 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     /**
      * {@inheritdoc}
      */
-    public function getWarningMessage()
+    abstract public function check();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setData(array $data = [])
     {
-        return null;
+        $this->data = $data;
     }
 
     /**
      * {@inheritdoc}
      */
-    abstract public function getActions();
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Marks requirements as checked.
+     */
+    public function markRequirementsAsChecked()
+    {
+        $this->requirementsChecked = true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function checkRequirements()
+    {
+        // No requirement checks by default.
+        return;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRequirementError($error)
+    {
+        $this->requirementErrors[] = $error;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRequirementErrors(array $errors)
+    {
+        foreach ($errors as $error) {
+            $this->setRequirementError($error);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequirementErrors()
+    {
+        if (!$this->requirementsChecked) {
+            $this->checkRequirements();
+            $this->markRequirementsAsChecked();
+        }
+
+        return $this->requirementErrors;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setWarning($warning)
+    {
+        $this->warnings[] = $warning;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setWarnings(array $warnings)
+    {
+        foreach ($warnings as $warning) {
+            $this->setWarning($warning);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWarnings()
+    {
+        return $this->warnings;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAction($action)
+    {
+        $this->actions[] = $action;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActions(array $actions)
+    {
+        foreach ($actions as $action) {
+            $this->setAction($action);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getActions()
+    {
+        return $this->actions;
+    }
 
     /**
      * Gets the policy check result.
@@ -78,11 +214,28 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
      */
     public function getResult()
     {
+        // Fail the check if there are requirement errors.
+        if ($this->getRequirementErrors()) {
+            $this->result = self::POLICY_FAIL;
+
+            return $this->result;
+        }
+
         if (is_null($this->result)) {
             $this->result = $this->check();
         }
 
         return $this->result;
+    }
+
+    /**
+     * Returns the check result message when there are requirement errors.
+     *
+     * @return string The result message.
+     */
+    public function getResultRequirementErrorMessage()
+    {
+        return 'Could not proceed with policy verification due to requirement errors';
     }
 
     /**
@@ -92,6 +245,10 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
      */
     public function getResultMessage()
     {
+        if ($this->getRequirementErrors()) {
+            return $this->getResultRequirementErrorMessage();
+        }
+
         if ($this->getResult() == self::POLICY_PASS) {
             return $this->getResultPassMessage();
         }
@@ -117,25 +274,5 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     public function isFail()
     {
         return $this->getResult() == self::POLICY_FAIL;
-    }
-
-    /**
-     * Sets the data array.
-     *
-     * @param array $data The policy data.
-     */
-    public function setData(array $data = [])
-    {
-        $this->data = $data;
-    }
-
-    /**
-     * Returns the data array.
-     *
-     * @return array The policy data.
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 }

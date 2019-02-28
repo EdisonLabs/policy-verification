@@ -145,8 +145,7 @@ class Report
     /**
      * Returns an array containing result messages of fail checks.
      *
-     * @return array
-     *   An array of messages.
+     * @return array An array of messages.
      *
      * @throws \Exception
      */
@@ -163,12 +162,30 @@ class Report
     }
 
     /**
+     * Returns an array containing result messages of pass checks.
+     *
+     * @return array An array of messages.
+     *
+     * @throws \Exception
+     */
+    public function getPassChecksResultMessages()
+    {
+        $messages = [];
+
+        /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
+        foreach ($this->getPassChecks() as $policyCheck) {
+            $messages[] = $policyCheck->getResultPassMessage();
+        }
+
+        return $messages;
+    }
+
+    /**
      * Returns an array containing action messages of failed policy checks.
      *
      * @param bool $namePrefix A boolean indicating to include the policy name prefix in the messages or not.
      *
-     * @return array
-     *   An array of action messages.
+     * @return array An array of action messages.
      *
      * @throws \Exception
      */
@@ -194,24 +211,54 @@ class Report
    *
    * @param bool $namePrefix A boolean indicating to include the policy name prefix in the message or not.
    *
-   * @return array
-   *   An array of messages.
+   * @return array An array of messages.
    *
    * @throws \Exception
    */
-    public function getWarningMessages($namePrefix = false)
+    public function getWarnings($namePrefix = false)
     {
         $messages = [];
 
         /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
         foreach ($this->getChecks() as $policyCheck) {
-            $message = $policyCheck->getWarningMessage();
-            if (!$message) {
+            $checkMessages = $policyCheck->getWarnings();
+            if (!$checkMessages) {
                 continue;
             }
 
             $prefix = $namePrefix ? $policyCheck->getName().': ' : '';
-            $messages[] = $prefix.$message;
+            foreach ($checkMessages as $message) {
+                $messages[] = $prefix.$message;
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Returns an array containing requirement errors from policy checks.
+     *
+     * @param bool $namePrefix A boolean indicating to include the policy name prefix in the message or not.
+     *
+     * @return array An array of messages.
+     *
+     * @throws \Exception
+     */
+    public function getRequirementErrors($namePrefix = false)
+    {
+        $messages = [];
+
+        /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
+        foreach ($this->getChecks() as $policyCheck) {
+            $errors = $policyCheck->getRequirementErrors();
+            if (!$errors) {
+                continue;
+            }
+
+            $prefix = $namePrefix ? $policyCheck->getName().': ' : '';
+            foreach ($errors as $message) {
+                $messages[] = $prefix.$message;
+            }
         }
 
         return $messages;
@@ -320,9 +367,11 @@ class Report
 
         // Include summary of messages.
         $summary['messages'] = [
+            'pass' => $this->getPassChecksResultMessages(),
             'fail' => $this->getFailChecksResultMessages(),
             'action' => $this->getFailChecksActions(),
-            'warning' => $this->getWarningMessages(),
+            'warning' => $this->getWarnings(),
+            'requirement_error' => $this->getRequirementErrors(),
         ];
 
         // Makes fail checks be listed first.
@@ -336,9 +385,10 @@ class Report
                 'name' => $policyCheck->getName(),
                 'description' => $policyCheck->getDescription(),
                 'category' => $policyCheck->getCategory(),
+                'requirement_errors' => $policyCheck->getRequirementErrors(),
                 'result' => $policyCheck->getResult(),
                 'message' => $policyCheck->getResultMessage(),
-                'message_warning' => $policyCheck->getWarningMessage(),
+                'warnings' => $policyCheck->getWarnings(),
                 'actions' => $policyCheck->isFail() ? $policyCheck->getActions() : [],
                 'severity' => $policyCheck->getSeverity(),
             ];

@@ -7,8 +7,16 @@ use EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase;
 /**
  * Example of policy check class to be used for tests.
  */
-class ExamplePolicyCheck extends AbstractPolicyCheckBase
+class ExamplePolicyCheckRequirementError extends AbstractPolicyCheckBase
 {
+
+    /**
+     * {@inheritdoc}
+     */
+    public function checkRequirements()
+    {
+        $this->setRequirementErrors(['Invalid data']);
+    }
 
   /**
    * {@inheritdoc}

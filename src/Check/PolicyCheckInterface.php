@@ -37,13 +37,6 @@ interface PolicyCheckInterface
     public function getSeverity();
 
     /**
-     * Performs the policy check.
-     *
-     * @return bool Constants indicating pass or fail.
-     */
-    public function check();
-
-    /**
      * Gets a description of what happened in a pass check.
      *
      * @return string The policy check result pass message.
@@ -58,20 +51,6 @@ interface PolicyCheckInterface
     public function getResultFailMessage();
 
     /**
-     * Returns a warning message regardless of the check result.
-     *
-     * @return string The policy check result warning message.
-     */
-    public function getWarningMessage();
-
-    /**
-     * Gets action items to perform if the check did not pass.
-     *
-     * @return array Returns a list containing the action messages.
-     */
-    public function getActions();
-
-    /**
      * Sets the data array.
      *
      * @param array $data The policy data.
@@ -84,4 +63,81 @@ interface PolicyCheckInterface
      * @return array The policy data.
      */
     public function getData();
+
+    /**
+     * Performs the requirements verification.
+     */
+    public function checkRequirements();
+
+    /**
+     * Sets a check requirement error message.
+     *
+     * @param string $error The error message.
+     */
+    public function setRequirementError($error);
+
+    /**
+     * Sets multiple check requirement error messages.
+     *
+     * @param array $errors An array of requirement error messages.
+     */
+    public function setRequirementErrors(array $errors);
+
+    /**
+     * Gets the check requirement error messages.
+     *
+     * @return array Returns a list containing the requirement error messages.
+     *
+     * @see checkRequirements()
+     */
+    public function getRequirementErrors();
+
+    /**
+     * Performs the policy check.
+     *
+     * @return bool Constants indicating pass or fail.
+     */
+    public function check();
+
+    /**
+     * Sets a warning message.
+     *
+     * @param string $warning The warning message.
+     */
+    public function setWarning($warning);
+
+    /**
+     * Sets multiple warning messages.
+     *
+     * @param array $warnings An array of warning messages.
+     */
+    public function setWarnings(array $warnings);
+
+    /**
+     * Returns warning messages regardless of the check result.
+     *
+     * @return array The policy check result warning messages.
+     */
+    public function getWarnings();
+
+    /**
+     * Sets a action message.
+     *
+     * @param string $action The action message.
+     */
+    public function setAction($action);
+
+    /**
+     * Sets multiple action messages.
+     *
+     * @param array $actions An array of messages.
+     */
+    public function setActions(array $actions);
+
+    /**
+     * Gets action items to perform if the check did not pass.
+     *
+     * @return array Returns a list containing the action messages.
+     */
+    public function getActions();
 }
