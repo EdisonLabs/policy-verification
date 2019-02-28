@@ -10,13 +10,13 @@ use EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase;
 class ExamplePolicyCheckRequirementError extends AbstractPolicyCheckBase
 {
 
-  /**
-   * {@inheritdoc}
-   */
-  public function checkRequirements()
-  {
-      $this->setRequirementErrors(['Invalid data']);
-  }
+    /**
+     * {@inheritdoc}
+     */
+    public function checkRequirements()
+    {
+        $this->setRequirementErrors(['Invalid data']);
+    }
 
   /**
    * {@inheritdoc}

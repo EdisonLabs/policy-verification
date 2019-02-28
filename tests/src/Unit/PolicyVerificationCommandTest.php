@@ -122,24 +122,24 @@ class PolicyVerificationCommandTest extends TestCase
         ]);
     }
 
-  /**
-   * Tests the PolicyVerificationCommand with Check requirement error.
-   */
-  public function testPolicyVerificationCommandForCheckRequirementError()
-  {
-      $command = new PolicyVerificationCommand();
-      $tester = new CommandTester($command);
+    /**
+     * Tests the PolicyVerificationCommand with Check requirement error.
+     */
+    public function testPolicyVerificationCommandForCheckRequirementError()
+    {
+        $command = new PolicyVerificationCommand();
+        $tester = new CommandTester($command);
 
-      $tester->execute([
-          '--class' => '\EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckRequirementError',
-      ]);
-      $output = $tester->getDisplay();
+        $tester->execute([
+            '--class' => '\EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckRequirementError',
+        ]);
+        $output = $tester->getDisplay();
 
-      $this->assertContains('[FAIL] Score 0% (0 of 1)', $output);
-      $this->assertContains('[FAIL] (HIGH) Example policy check: Could not proceed with policy verification due to requirement errors', $output);
-      $this->assertNotContains('* Example policy check: Just an action example.', $output);
-      $this->assertNotContains('* Example policy check: Just an example of warning message', $output);
-      $this->assertContains('Requirement errors', $output);
-      $this->assertContains('Invalid data', $output);
-  }
+        $this->assertContains('[FAIL] Score 0% (0 of 1)', $output);
+        $this->assertContains('[FAIL] (HIGH) Example policy check: Could not proceed with policy verification due to requirement errors', $output);
+        $this->assertNotContains('* Example policy check: Just an action example.', $output);
+        $this->assertNotContains('* Example policy check: Just an example of warning message', $output);
+        $this->assertContains('Requirement errors', $output);
+        $this->assertContains('Invalid data', $output);
+    }
 }

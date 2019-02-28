@@ -221,13 +221,13 @@ class Report
 
         /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
         foreach ($this->getChecks() as $policyCheck) {
-            $check_messages = $policyCheck->getWarnings();
-            if (!$check_messages) {
+            $checkMessages = $policyCheck->getWarnings();
+            if (!$checkMessages) {
                 continue;
             }
 
             $prefix = $namePrefix ? $policyCheck->getName().': ' : '';
-            foreach ($check_messages as $message) {
+            foreach ($checkMessages as $message) {
                 $messages[] = $prefix.$message;
             }
         }

@@ -275,5 +275,4 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     {
         return $this->getResult() == self::POLICY_FAIL;
     }
-
 }

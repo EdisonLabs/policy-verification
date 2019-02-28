@@ -140,5 +140,4 @@ interface PolicyCheckInterface
      * @return array Returns a list containing the action messages.
      */
     public function getActions();
-
 }
