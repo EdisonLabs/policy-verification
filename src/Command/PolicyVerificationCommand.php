@@ -145,6 +145,13 @@ class PolicyVerificationCommand extends Command
             $io->block("Score 100% ($totalPassPolicies of $totalPolicies)", 'PASS', 'fg=white;bg=green', ' ', true);
         }
 
+        // Prints requirement error messages.
+        $requirementErrorMessages = $this->report->getRequirementErrors(true);
+        if ($requirementErrorMessages) {
+            $io->section('Requirement errors');
+            $io->listing($requirementErrorMessages);
+        }
+
         // Prints actions.
         $failChecksActions = $this->report->getFailChecksActions(true);
         if ($failChecksActions) {
@@ -153,7 +160,7 @@ class PolicyVerificationCommand extends Command
         }
 
         // Prints warning messages.
-        $warningMessages = $this->report->getWarningMessages(true);
+        $warningMessages = $this->report->getWarnings(true);
         if ($warningMessages) {
             $io->section('Warnings');
             $io->listing($warningMessages);

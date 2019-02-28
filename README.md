@@ -59,17 +59,13 @@ class PhpVersion extends AbstractPolicyCheckBase
     {
         return 'The system is running an older version of PHP';
     }
-    
-    public function getWarningMessage()
-    {
-        return 'PHP 7.1 will have security support up to Dec 2019';
-    }
 
-    public function getActions()
+    public function checkRequirements()
     {
-        return [
-            'Upgrade to PHP 7 or greater'
-        ];
+        // Example of requirement verification.
+        if (!is_array($this->getData())) {
+            $this->setRequirementError('Invalid data');
+        }
     }
 
     public function check()
@@ -77,8 +73,12 @@ class PhpVersion extends AbstractPolicyCheckBase
         $phpVersion = phpversion();
 
         if ($phpVersion[0] < 7) {
+            $this->setAction('Upgrade to PHP 7 or greater');
+
             return parent::POLICY_FAIL;
         }
+
+        $this->setWarning('PHP 7.1 will have security support up to Dec 2019');
 
         return parent::POLICY_PASS;
     }
@@ -123,12 +123,14 @@ $report->setData($data);
 $report->getData();
 $report->getFailChecks();
 $report->getFailChecksActions();
+$report->getPassChecksResultMessages();
 $report->getFailChecksResultMessages();
+$report->getRequirementErrors();
 $report->getResult();
 $report->getResultSummary();
 $report->getScore();
 $report->getTotalChecks();
-$report->getWarningMessages();
+$report->getWarnings();
 $report->setCheck($check);
 ```
 

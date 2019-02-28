@@ -51,11 +51,11 @@ class PolicyVerificationTest extends TestCase
     }
 
     /**
-     * Covers \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase
+     * Returns a mocked Policy check class instance.
      *
-     * @return null
+     * @return \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase The policy check instance.
      */
-    public function testAbstractPolicyCheckBase()
+    public function getCheckBaseMock()
     {
         /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $checkBaseMock */
         $checkBaseMock = $this->getMockBuilder('EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase')
@@ -66,30 +66,36 @@ class PolicyVerificationTest extends TestCase
             'getSeverity',
             'getResultPassMessage',
             'getResultFailMessage',
-            'getWarningMessage',
-            'getActions',
         ])
         ->getMockForAbstractClass();
 
-        $checkBaseMock->setData(['mytestdata' => 'ok']);
+        $warnings = ['Just an example of warning message'];
+        $actions = [
+            'First action for test',
+            'Second action for test',
+        ];
 
-        $checkBaseMock->expects($this->once())
+        $checkBaseMock->setData(['mytestdata' => 'ok']);
+        $checkBaseMock->setWarnings($warnings);
+        $checkBaseMock->setActions($actions);
+
+        $checkBaseMock->expects($this->any())
         ->method('check')
         ->willReturn(AbstractPolicyCheckBase::POLICY_PASS);
 
-        $checkBaseMock->expects($this->once())
+        $checkBaseMock->expects($this->any())
         ->method('getName')
         ->willReturn('Test policy Check');
 
-        $checkBaseMock->expects($this->once())
+        $checkBaseMock->expects($this->any())
         ->method('getDescription')
         ->willReturn('Test policy Check description');
 
-        $checkBaseMock->expects($this->once())
+        $checkBaseMock->expects($this->any())
         ->method('getCategory')
         ->willReturn('Test');
 
-        $checkBaseMock->expects($this->once())
+        $checkBaseMock->expects($this->any())
         ->method('getSeverity')
         ->willReturn(AbstractPolicyCheckBase::POLICY_SEVERITY_LOW);
 
@@ -97,20 +103,27 @@ class PolicyVerificationTest extends TestCase
         ->method('getResultPassMessage')
         ->willReturn('This policy passes');
 
-        $checkBaseMock->expects($this->once())
+        $checkBaseMock->expects($this->any())
         ->method('getResultFailMessage')
         ->willReturn('This policy fails');
 
-        $checkBaseMock->expects($this->once())
-        ->method('getWarningMessage')
-        ->willReturn('Just an example of warning message');
+        return $checkBaseMock;
+    }
 
-        $checkBaseMock->expects($this->once())
-        ->method('getActions')
-        ->willReturn([
+    /**
+     * Covers \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase
+     *
+     * @return null
+     */
+    public function testAbstractPolicyCheckBase()
+    {
+        $checkBaseMock = $this->getCheckBaseMock();
+
+        $warnings = ['Just an example of warning message'];
+        $actions = [
             'First action for test',
             'Second action for test',
-        ]);
+        ];
 
         $data = $checkBaseMock->getData();
         $this->assertArrayHasKey('mytestdata', $data);
@@ -121,11 +134,29 @@ class PolicyVerificationTest extends TestCase
         $this->assertEquals(AbstractPolicyCheckBase::POLICY_SEVERITY_LOW, $checkBaseMock->getSeverity());
         $this->assertEquals('This policy passes', $checkBaseMock->getResultPassMessage());
         $this->assertEquals('This policy fails', $checkBaseMock->getResultFailMessage());
-        $this->assertEquals('Just an example of warning message', $checkBaseMock->getWarningMessage());
-        $this->assertEquals(['First action for test', 'Second action for test'], $checkBaseMock->getActions());
+        $this->assertEquals($warnings, $checkBaseMock->getWarnings());
+        $this->assertEquals($actions, $checkBaseMock->getActions());
         $this->assertEquals(AbstractPolicyCheckBase::POLICY_PASS, $checkBaseMock->getResult());
         $this->assertEquals('This policy passes', $checkBaseMock->getResultMessage());
         $this->assertTrue($checkBaseMock->isPass());
         $this->assertFalse($checkBaseMock->isFail());
+    }
+
+    /**
+     * Test a policy check with requirement error.
+     *
+     * @return null
+     */
+    public function testAbstractPolicyCheckBaseRequirementError()
+    {
+        /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $checkBaseMock */
+        $checkBaseMock = $this->getCheckBaseMock();
+
+        $checkBaseMock->checkRequirements();
+        $checkBaseMock->setRequirementErrors(['Some data is missing']);
+
+        $this->assertEquals(AbstractPolicyCheckBase::POLICY_FAIL, $checkBaseMock->getResult());
+        $this->assertEquals('Could not proceed with policy verification due to requirement errors', $checkBaseMock->getResultMessage());
+        $this->assertEquals(['Some data is missing'], $checkBaseMock->getRequirementErrors());
     }
 }
