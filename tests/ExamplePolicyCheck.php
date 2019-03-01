@@ -45,22 +45,6 @@ class ExamplePolicyCheck extends AbstractPolicyCheckBase
     /**
      * {@inheritdoc}
      */
-    public function getResultPassMessage()
-    {
-        return 'The policy passes';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getResultFailMessage()
-    {
-        return 'The policy fails';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function check()
     {
         $data = $this->getData();
@@ -69,8 +53,12 @@ class ExamplePolicyCheck extends AbstractPolicyCheckBase
         $this->setAction('Just an action example.');
 
         if (isset($data['pass']) && $data['pass'] === 1) {
+            $this->setResultPassMessage('The policy passes');
+
             return parent::POLICY_PASS;
         }
+
+        $this->setResultFailMessage('The policy fails');
 
         return parent::POLICY_FAIL;
     }

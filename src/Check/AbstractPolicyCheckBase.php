@@ -57,6 +57,20 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     protected $requirementsChecked = false;
 
     /**
+     * The result pass message for the check.
+     *
+     * @var string
+     */
+    protected $resultPassMessage;
+
+    /**
+     * The result fail message for the check.
+     *
+     * @var string
+     */
+    protected $resultFailMessage;
+
+    /**
      * {@inheritdoc}
      */
     abstract public function getName();
@@ -75,16 +89,6 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
      * {@inheritdoc}
      */
     abstract public function getSeverity();
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function getResultPassMessage();
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function getResultFailMessage();
 
     /**
      * {@inheritdoc}
@@ -236,6 +240,46 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     public function getResultRequirementErrorMessage()
     {
         return 'Could not proceed with policy verification due to requirement errors';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setResultPassMessage($message)
+    {
+        $this->resultPassMessage = $message;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResultPassMessage()
+    {
+        if ($this->resultPassMessage) {
+            return $this->resultPassMessage;
+        }
+
+        return 'Check passed';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setResultFailMessage($message)
+    {
+        $this->resultFailMessage = $message;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResultFailMessage()
+    {
+        if ($this->resultFailMessage) {
+            return $this->resultFailMessage;
+        }
+
+        return 'Check failed';
     }
 
     /**

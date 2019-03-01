@@ -78,6 +78,8 @@ class PolicyVerificationTest extends TestCase
         $checkBaseMock->setData(['mytestdata' => 'ok']);
         $checkBaseMock->setWarnings($warnings);
         $checkBaseMock->setActions($actions);
+        $checkBaseMock->setResultPassMessage('This policy passes');
+        $checkBaseMock->setResultFailMessage('This policy fails');
 
         $checkBaseMock->expects($this->any())
         ->method('check')
@@ -154,9 +156,13 @@ class PolicyVerificationTest extends TestCase
 
         $checkBaseMock->checkRequirements();
         $checkBaseMock->setRequirementErrors(['Some data is missing']);
+        $checkBaseMock->setResultPassMessage(null);
+        $checkBaseMock->setResultFailMessage(null);
 
         $this->assertEquals(AbstractPolicyCheckBase::POLICY_FAIL, $checkBaseMock->getResult());
         $this->assertEquals('Could not proceed with policy verification due to requirement errors', $checkBaseMock->getResultMessage());
         $this->assertEquals(['Some data is missing'], $checkBaseMock->getRequirementErrors());
+        $this->assertEquals('Check passed', $checkBaseMock->getResultPassMessage());
+        $this->assertEquals('Check failed', $checkBaseMock->getResultFailMessage());
     }
 }

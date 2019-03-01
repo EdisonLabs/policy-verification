@@ -37,11 +37,25 @@ interface PolicyCheckInterface
     public function getSeverity();
 
     /**
+     * Sets the result pass message for the policy check.
+     *
+     * @param string $message The result message.
+     */
+    public function setResultPassMessage($message);
+
+    /**
      * Gets a description of what happened in a pass check.
      *
      * @return string The policy check result pass message.
      */
     public function getResultPassMessage();
+
+    /**
+     * Sets the result fail message for the policy check.
+     *
+     * @param string $message The result message.
+     */
+    public function setResultFailMessage($message);
 
     /**
      * Gets the description of what happened in a fail check.

@@ -50,16 +50,6 @@ class PhpVersion extends AbstractPolicyCheckBase
         return parent::POLICY_SEVERITY_HIGH;
     }
 
-    public function getResultPassMessage()
-    {
-        return 'The system is running a recent version of PHP';
-    }
-
-    public function getResultFailMessage()
-    {
-        return 'The system is running an older version of PHP';
-    }
-
     public function checkRequirements()
     {
         // Example of requirement verification.
@@ -74,12 +64,14 @@ class PhpVersion extends AbstractPolicyCheckBase
 
         if ($phpVersion[0] < 7) {
             $this->setAction('Upgrade to PHP 7 or greater');
+            $this->setResultErrorMessage('The system is running an older version of PHP');
 
             return parent::POLICY_FAIL;
         }
 
         $this->setWarning('PHP 7.1 will have security support up to Dec 2019');
-
+        $this->setResultPassMessage('The system is running a recent version of PHP');
+        
         return parent::POLICY_PASS;
     }
 }
