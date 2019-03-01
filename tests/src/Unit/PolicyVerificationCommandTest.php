@@ -96,6 +96,7 @@ class PolicyVerificationCommandTest extends TestCase
         // Test pass JSON output.
         $tester->execute([
             '--format' => 'json',
+            '--data-exclude-output' => '""',
             '--class' => '\EdisonLabs\PolicyVerification\Test\ExamplePolicyCheck',
             '--data' => __DIR__.'/../../data.json',
         ]);

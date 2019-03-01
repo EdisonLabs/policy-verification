@@ -82,8 +82,9 @@ class PolicyVerificationCommand extends Command
             ->setName('edisonlabs:policy-verification')
             ->setDescription('Edison Labs Policy verification')
             ->setHelp('This command allows you to get results from policy checks')
-            ->addOption('format', null, InputOption::VALUE_REQUIRED, 'The output format: table, json', 'table')
             ->addOption('data', null, InputOption::VALUE_REQUIRED, 'Pass custom data to the policy checks, which can be a file or a string containing JSON format')
+            ->addOption('format', null, InputOption::VALUE_REQUIRED, 'The output format: table, json', 'table')
+            ->addOption('data-exclude-output', null, InputOption::VALUE_REQUIRED, 'Specify a comma-separated list of data keys to be removed from report output')
             ->addOption('class', null, InputOption::VALUE_REQUIRED, 'Specify a policy check class to be included in the list of checks to be reported')
         ;
     }
@@ -191,6 +192,21 @@ class PolicyVerificationCommand extends Command
         $format = $input->getOption('format');
         switch ($format) {
             case 'json':
+                $dataExclude = $input->getOption('data-exclude-output');
+                $dataExclude = explode(',', $dataExclude);
+
+                if (!is_array($dataExclude)) {
+                    throw new RuntimeException('Invalid data-exclude-output option value');
+                }
+
+                foreach ($dataExclude as $exclude) {
+                    if (!isset($policySummary['data'][$exclude])) {
+                        continue;
+                    }
+
+                    unset($policySummary['data'][$exclude]);
+                }
+
                 $output->writeln(json_encode($policySummary));
                 break;
 
