@@ -226,7 +226,14 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
         }
 
         if (is_null($this->result)) {
-            $this->result = $this->check();
+            $result = $this->check();
+
+            // Fail if the check does not return a result.
+            if (is_null($result)) {
+                $result = self::POLICY_FAIL;
+            }
+
+            $this->result = $result;
         }
 
         return $this->result;

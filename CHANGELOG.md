@@ -2,6 +2,9 @@
 
 ## Releases
 
+### 1.0.0-alpha5, 2019-03-07
+- Make the policy check to fail by default if there are no result returned from the check() method.
+
 ### 1.0.0-alpha4, 2019-03-01
 - Added two new methods to check interface: setResultPassMessage() and setResultFailMessage(). 
 
