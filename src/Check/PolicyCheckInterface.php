@@ -114,6 +114,13 @@ interface PolicyCheckInterface
     public function check();
 
     /**
+     * Returns whether to skip the check or not.
+     *
+     * @return bool The flag to to skip or not the check.
+     */
+    public function skipCheck();
+
+    /**
      * Sets a warning message.
      *
      * @param string $warning The warning message.
