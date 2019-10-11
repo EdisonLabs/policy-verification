@@ -100,7 +100,7 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
      */
     public function skipCheck()
     {
-        return FALSE;
+        return false;
     }
 
     /**

@@ -104,7 +104,7 @@ class Report
                 }
 
                 if ($policyCheck->skipCheck()) {
-                  continue;
+                    continue;
                 }
 
                 $this->setCheck($policyCheck);
