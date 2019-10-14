@@ -16,6 +16,14 @@ class PolicyVerificationTest extends TestCase
 {
 
     /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        require_once __DIR__.'/../../ExamplePolicyCheckSkipCheck.php';
+    }
+
+    /**
      * Basic test to get success result.
      */
     public function testPolicyVerification()
@@ -166,5 +174,26 @@ class PolicyVerificationTest extends TestCase
         $this->assertEquals(AbstractPolicyCheckBase::POLICY_FAIL, $checkBaseMock->getResult());
         $this->assertEquals('Could not proceed with policy verification due to requirement errors', $checkBaseMock->getResultMessage());
         $this->assertEquals(['Some data is missing'], $checkBaseMock->getRequirementErrors());
+    }
+
+    /**
+     * Test a policy check with skip check.
+     *
+     * @return null
+     */
+    public function testExamplePolicyCheckSkipCheck()
+    {
+      /** @var \EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckSkipCheck $checkBaseMock */
+      $checkMock = $this->getMockBuilder('EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckSkipCheck')
+        ->setMethods([
+          'skipCheck',
+        ])
+        ->getMockForAbstractClass();
+
+        $checkMock->expects($this->any())
+        ->method('skipCheck')
+        ->willReturn(true);
+
+        $this->assertEquals(true, $checkMock->skipCheck());
     }
 }
