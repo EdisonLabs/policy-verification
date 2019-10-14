@@ -60,6 +60,7 @@ class PolicyVerificationTest extends TestCase
         /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $checkBaseMock */
         $checkBaseMock = $this->getMockBuilder('EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase')
         ->setMethods([
+            'skipCheck',
             'getName',
             'getDescription',
             'getCategory',
@@ -84,6 +85,10 @@ class PolicyVerificationTest extends TestCase
         $checkBaseMock->expects($this->any())
         ->method('check')
         ->willReturn(AbstractPolicyCheckBase::POLICY_PASS);
+
+        $checkBaseMock->expects($this->any())
+        ->method('skipCheck')
+        ->willReturn(false);
 
         $checkBaseMock->expects($this->any())
         ->method('getName')
@@ -130,6 +135,7 @@ class PolicyVerificationTest extends TestCase
         $data = $checkBaseMock->getData();
         $this->assertArrayHasKey('mytestdata', $data);
         $this->assertEquals($data['mytestdata'], 'ok');
+        $this->assertEquals(false, $checkBaseMock->skipCheck());
         $this->assertEquals('Test policy Check', $checkBaseMock->getName());
         $this->assertEquals('Test policy Check description', $checkBaseMock->getDescription());
         $this->assertEquals('Test', $checkBaseMock->getCategory());
