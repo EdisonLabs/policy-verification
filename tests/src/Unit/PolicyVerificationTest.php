@@ -183,10 +183,10 @@ class PolicyVerificationTest extends TestCase
      */
     public function testExamplePolicyCheckSkipCheck()
     {
-      /** @var \EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckSkipCheck $checkBaseMock */
-      $checkMock = $this->getMockBuilder('EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckSkipCheck')
+        /** @var \EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckSkipCheck $checkBaseMock */
+        $checkMock = $this->getMockBuilder('EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckSkipCheck')
         ->setMethods([
-          'skipCheck',
+            'skipCheck',
         ])
         ->getMockForAbstractClass();
 
