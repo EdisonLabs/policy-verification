@@ -16,14 +16,6 @@ class PolicyVerificationTest extends TestCase
 {
 
     /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        require_once __DIR__.'/../../ExamplePolicyCheckSkipCheck.php';
-    }
-
-    /**
      * Basic test to get success result.
      */
     public function testPolicyVerification()
@@ -93,10 +85,6 @@ class PolicyVerificationTest extends TestCase
         $checkBaseMock->expects($this->any())
         ->method('check')
         ->willReturn(AbstractPolicyCheckBase::POLICY_PASS);
-
-        $checkBaseMock->expects($this->any())
-        ->method('skipCheck')
-        ->willReturn(false);
 
         $checkBaseMock->expects($this->any())
         ->method('getName')
@@ -183,17 +171,20 @@ class PolicyVerificationTest extends TestCase
      */
     public function testExamplePolicyCheckSkipCheck()
     {
-        /** @var \EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckSkipCheck $checkBaseMock */
-        $checkMock = $this->getMockBuilder('EdisonLabs\PolicyVerification\Test\ExamplePolicyCheckSkipCheck')
-        ->setMethods([
-            'skipCheck',
-        ])
-        ->getMockForAbstractClass();
+        $data = ['mydata' => 'value'];
+        $report = new Report($data);
+        $checkBaseMock = $this->getCheckBaseMock();
+        $checkBaseMock->expects($this->any())
+            ->method('skipCheck')
+            ->willReturn(true);
+        $report->setCheck($checkBaseMock);
 
-        $checkMock->expects($this->any())
-        ->method('skipCheck')
-        ->willReturn(true);
-
-        $this->assertEquals(true, $checkMock->skipCheck());
+        // It should be skipped, no passing or failing checks.
+        $this->assertEmpty($report->getPassChecks());
+        $this->assertEmpty($report->getFailChecks());
+        // Check counter should ignore skipped checks.
+        $this->assertEquals(0, $report->getTotalChecks());
+        // No checks performed, result should pass.
+        $this->assertTrue($report->getResult());
     }
 }

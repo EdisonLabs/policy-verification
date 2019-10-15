@@ -71,7 +71,9 @@ class Report
     {
         $policyCheck->setData($this->getData());
 
-        $this->policyChecks[] = $policyCheck;
+        if ($policyCheck->skipCheck() == false) {
+            $this->policyChecks[] = $policyCheck;
+        }
     }
 
     /**
@@ -101,10 +103,6 @@ class Report
                 // Sanity check by class type.
                 if (!$policyCheck instanceof PolicyCheckInterface) {
                     throw new RuntimeException(sprintf('The policy check class %s must be an instance of EdisonLabs\PolicyVerification\Check\PolicyCheckInterface', $serviceName));
-                }
-
-                if ($policyCheck->skipCheck()) {
-                    continue;
                 }
 
                 $this->setCheck($policyCheck);
