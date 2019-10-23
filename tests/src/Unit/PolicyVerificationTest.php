@@ -60,6 +60,7 @@ class PolicyVerificationTest extends TestCase
         /** @var \EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase $checkBaseMock */
         $checkBaseMock = $this->getMockBuilder('EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase')
         ->setMethods([
+            'skipCheck',
             'getName',
             'getDescription',
             'getCategory',
@@ -130,6 +131,7 @@ class PolicyVerificationTest extends TestCase
         $data = $checkBaseMock->getData();
         $this->assertArrayHasKey('mytestdata', $data);
         $this->assertEquals($data['mytestdata'], 'ok');
+        $this->assertEquals(false, $checkBaseMock->skipCheck());
         $this->assertEquals('Test policy Check', $checkBaseMock->getName());
         $this->assertEquals('Test policy Check description', $checkBaseMock->getDescription());
         $this->assertEquals('Test', $checkBaseMock->getCategory());
@@ -160,5 +162,29 @@ class PolicyVerificationTest extends TestCase
         $this->assertEquals(AbstractPolicyCheckBase::POLICY_FAIL, $checkBaseMock->getResult());
         $this->assertEquals('Could not proceed with policy verification due to requirement errors', $checkBaseMock->getResultMessage());
         $this->assertEquals(['Some data is missing'], $checkBaseMock->getRequirementErrors());
+    }
+
+    /**
+     * Test a policy check with skip check.
+     *
+     * @return null
+     */
+    public function testExamplePolicyCheckSkipCheck()
+    {
+        $data = ['mydata' => 'value'];
+        $report = new Report($data);
+        $checkBaseMock = $this->getCheckBaseMock();
+        $checkBaseMock->expects($this->any())
+            ->method('skipCheck')
+            ->willReturn(true);
+        $report->setCheck($checkBaseMock);
+
+        // It should be skipped, no passing or failing checks.
+        $this->assertEmpty($report->getPassChecks());
+        $this->assertEmpty($report->getFailChecks());
+        // Check counter should ignore skipped checks.
+        $this->assertEquals(0, $report->getTotalChecks());
+        // No checks performed, result should pass.
+        $this->assertTrue($report->getResult());
     }
 }

@@ -2,7 +2,6 @@
 
 namespace EdisonLabs\PolicyVerification\Unit;
 
-use EdisonLabs\PolicyVerification\Check\AbstractPolicyCheckBase;
 use EdisonLabs\PolicyVerification\Command\PolicyVerificationCommand;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

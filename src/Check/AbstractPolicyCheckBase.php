@@ -98,6 +98,14 @@ abstract class AbstractPolicyCheckBase implements PolicyCheckInterface
     /**
      * {@inheritdoc}
      */
+    public function skipCheck()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setData(array $data = [])
     {
         $this->data = $data;

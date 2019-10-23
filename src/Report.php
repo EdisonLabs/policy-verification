@@ -71,7 +71,9 @@ class Report
     {
         $policyCheck->setData($this->getData());
 
-        $this->policyChecks[] = $policyCheck;
+        if ($policyCheck->skipCheck() == false) {
+            $this->policyChecks[] = $policyCheck;
+        }
     }
 
     /**
