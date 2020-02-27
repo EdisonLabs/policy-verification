@@ -3,39 +3,38 @@
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Finder\Finder;
 
-// Set composer vendor path.
-$composerSources = [
+$composerAutoloadPaths = [
     __DIR__.'/../../../autoload.php',
     __DIR__.'/../vendor/autoload.php',
 ];
 
-$composerVendor = null;
-foreach ($composerSources as $autoload) {
+$policyCheckFolders = [];
+foreach ($composerAutoloadPaths as $autoload) {
     if (file_exists($autoload)) {
-        $composerVendor = str_replace('/autoload.php', '', $autoload);
+        $autoload = require $autoload;
+        $autoloadPsr4Prefixes = $autoload->getPrefixesPsr4();
+        $policyCheckFolders = $autoloadPsr4Prefixes['EdisonLabs\PolicyVerification\\'];
         break;
     }
 }
 
-// Find packages using the Policy check classes.
-$finder = new Finder();
-$finder->directories();
-$finder->followLinks();
-$finder->in("$composerVendor/..");
-$finder->name('EdisonLabs');
+// Filter paths.
+$policyCheckFolders = array_filter($policyCheckFolders, function ($path) {
+    return strpos($path, 'EdisonLabs/PolicyVerification') !== false;
+});
 
 // Register services.
-if ($finder->count() !== 0) {
+if ($policyCheckFolders) {
     $definition = new Definition();
     $definition
-    ->setPublic(true);
+        ->setPublic(true);
 
-    foreach ($finder as $folder) {
+    foreach ($policyCheckFolders as $folder) {
         // $this is a reference to the current loader
         $this->registerClasses(
             $definition,
             'EdisonLabs\\PolicyVerification\\',
-            $folder->getRealPath().'/PolicyVerification'
+            $folder
         );
     }
 }
