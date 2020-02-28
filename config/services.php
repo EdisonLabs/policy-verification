@@ -1,7 +1,6 @@
 <?php
 
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\Finder\Finder;
 
 $composerAutoloadPaths = [
     __DIR__.'/../../../autoload.php',

@@ -14,8 +14,7 @@
     "require": {
         "symfony/config": "~3.4.0",
         "symfony/console": "~3.4.0",
-        "symfony/dependency-injection": "~3.4.0",
-        "symfony/finder": "~3.4.0"
+        "symfony/dependency-injection": "~3.4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.5",
