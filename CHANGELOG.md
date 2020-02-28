@@ -2,6 +2,10 @@
 
 ## Releases
 
+### 1.0.0, 2020-02-28
+- First stable release.
+- Improved performance by not scanning vendor folder recursively search for policy check classes. (#8)
+
 ### 1.0.0-beta1, 2019-10-23
 - Provide the method `skipCheck()` to be able to skip the policy check to be verified.
 
