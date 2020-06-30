@@ -391,7 +391,7 @@ class Report
                 'result' => $policyCheck->getResult(),
                 'message' => $policyCheck->getResultMessage(),
                 'warnings' => $policyCheck->getWarnings(),
-                'actions' => $policyCheck->isFail() ? $policyCheck->getActions() : [],
+                'actions' => $policyCheck->getActions(),
                 'severity' => $policyCheck->getSeverity(),
             ];
         }
