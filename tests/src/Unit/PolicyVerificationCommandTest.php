@@ -107,7 +107,7 @@ class PolicyVerificationCommandTest extends TestCase
         unset($output['timestamp']);
         $output = json_encode($output);
 
-        $this->assertContains('{"data":{"pass":1},"result":true,"summary":{"total":1,"total_pass":1,"total_fail":0,"percentage_pass":100},"policies":{"test":{"example_policy_check":{"name":"Example policy check","description":"This is an example of a policy check","category":"Test","requirement_errors":[],"result":true,"message":"The policy passes","warnings":["Just an example of warning message"],"actions":["Just an action example."],"severity":"high"}}},"messages":{"pass":["The policy passes"],"fail":[],"action":[],"warning":["Just an example of warning message"],"requirement_error":[]}}', $output);
+        $this->assertContains('{"data":{"pass":1},"result":true,"summary":{"total":1,"total_pass":1,"total_fail":0,"percentage_pass":100},"policies":{"test":{"example_policy_check":{"name":"Example policy check","description":"This is an example of a policy check","category":"Test","requirement_errors":[],"result":true,"message":"The policy passes","warnings":["Just an example of warning message"],"actions":["Just an action example."],"severity":"high"}}},"messages":{"pass":["The policy passes"],"fail":[],"action":["Just an action example."],"warning":["Just an example of warning message"],"requirement_error":[]}}', $output);
 
         // Test exceptions.
         $this->expectException(RuntimeException::class);
