@@ -114,7 +114,7 @@ $report->getScorePercentage();
 $report->setData($data);
 $report->getData();
 $report->getFailChecks();
-$report->getFailChecksActions();
+$report->getActions();
 $report->getPassChecksResultMessages();
 $report->getFailChecksResultMessages();
 $report->getRequirementErrors();

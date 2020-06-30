@@ -183,7 +183,7 @@ class Report
     }
 
     /**
-     * Returns an array containing action messages of failed policy checks.
+     * Returns an array containing action messages of policy checks.
      *
      * @param bool $namePrefix A boolean indicating to include the policy name prefix in the messages or not.
      *
@@ -191,12 +191,12 @@ class Report
      *
      * @throws \Exception
      */
-    public function getFailChecksActions($namePrefix = false)
+    public function getActions($namePrefix = false)
     {
         $messages = [];
 
         /** @var \EdisonLabs\PolicyVerification\Check\PolicyCheckInterface $policyCheck */
-        foreach ($this->getFailChecks() as $policyCheck) {
+        foreach ($this->getChecks() as $policyCheck) {
             $prefix = $namePrefix ? $policyCheck->getName().': ' : '';
             $actions = $policyCheck->getActions();
 
@@ -371,7 +371,7 @@ class Report
         $summary['messages'] = [
             'pass' => $this->getPassChecksResultMessages(),
             'fail' => $this->getFailChecksResultMessages(),
-            'action' => $this->getFailChecksActions(),
+            'action' => $this->getActions(),
             'warning' => $this->getWarnings(),
             'requirement_error' => $this->getRequirementErrors(),
         ];

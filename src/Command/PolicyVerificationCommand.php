@@ -154,7 +154,7 @@ class PolicyVerificationCommand extends Command
         }
 
         // Prints actions.
-        $failChecksActions = $this->report->getFailChecksActions(true);
+        $failChecksActions = $this->report->getActions(true);
         if ($failChecksActions) {
             $io->section('Actions');
             $io->listing($failChecksActions);
