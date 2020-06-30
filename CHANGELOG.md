@@ -2,6 +2,9 @@
 
 ## Releases
 
+### 1.0.1, 2020-06-30
+- Allow passing policies to provide actions. (#9)
+
 ### 1.0.0, 2020-02-28
 - First stable release.
 - Improved performance by not scanning vendor folder recursively search for policy check classes. (#8)
