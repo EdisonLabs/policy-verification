@@ -2,6 +2,9 @@
 
 ## Releases
 
+### 1.1.0, 2022-03-29
+- Upgraded Symfony packages to 4.x.
+
 ### 1.0.1, 2020-06-30
 - Allow passing policies to provide actions. (#9)
 
