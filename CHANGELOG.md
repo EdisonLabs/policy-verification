@@ -2,6 +2,11 @@
 
 ## Releases
 
+### 1.2.0, 2023-11-13
+- Upgraded symfony/config to ^6.2.
+- Upgraded symfony/console to ^6.2.
+- Upgraded symfony/dependency-injection to ^6.0.
+
 ### 1.1.0, 2022-03-29
 - Upgraded Symfony packages to 4.x.
 
